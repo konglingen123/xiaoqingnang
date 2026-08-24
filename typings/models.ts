@@ -34,6 +34,7 @@ export interface AreaItem {
   name: string
   hint: string
   subtitle: string   // 部位方案页副题文案（人话调性）
+  aliases: string[]  // 口语别名（AI 搜索意图识别用）
 }
 
 /** 安全红绿灯（合规红线 3） */
@@ -52,6 +53,8 @@ export interface RemedyPlan {
   motto: string
   desc: string
   areas: string[]        // 适用部位
+  aliases: string[]      // 口语别名（AI 搜索匹配的关键，如「落枕」「手脚冰凉」）
+  scenarios: string[]    // 场景词（「久坐」「睡前」，AI 追问偏好过滤用）
   categories: string[]   // 品类标签（驱动千人千面）
   safety: SafetyLevel    // 红绿灯
   contraindications: string[]  // 强制字段：每个方案必须标明禁忌
