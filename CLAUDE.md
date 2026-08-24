@@ -4,7 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 项目概览
 
-小青囊：微不适轻养生自愈小程序。用户点选身体部位 + 体感 → 匹配 3 分钟自愈仪式 → 打卡沉淀健康档案。合规底线是**彻底去疾病化**（这是健康类小程序，文案不得出现任何疾病/医疗词汇，见下文「合规红线」）。
+小青囊：微不适轻养生自愈小程序。用户点击人体图部位 → 直达该部位的舒缓方案 → 3 分钟自愈仪式 → 打卡沉淀健康档案。合规底线是**彻底去疾病化**（这是健康类小程序，文案不得出现任何疾病/医疗词汇，见下文「合规红线」）。
+
+v2 规划文档在 `docs/features/`（首页人体图直跳 + AI 搜索路由分流方案），涉及首页/AI 的新功能先读它。
 
 技术栈：uni-app（Vue 3 + TypeScript），一套代码跑微信小程序 / H5 / App。**本项目零 npm 依赖**——没有 package.json，不运行 `npm install` / `npm run` 等命令。
 
@@ -28,10 +30,10 @@ node scripts/check-content.js
 
 ```
 typings/models.ts   ← 领域模型唯一数据契约，所有层共同引用
-data/               ← 内容数据（全部数据驱动：方案、体质、题库、部位、体感、合规文案）
+data/               ← 内容数据（全部数据驱动：方案、体质、题库、部位、合规文案）
 utils/              ← 纯逻辑层，与框架解耦（不 import 任何 .vue）
 components/         ← 通用组件，easycom 按目录名自动注册（无需手动 import/注册）
-pages/              ← 5 个页面，UI + 组装，不含业务规则
+pages/              ← 6 个页面，UI + 组装，不含业务规则
 ```
 
 - **换数据不改代码**：新增/修改方案、题库、部位等，只改 `data/`。
@@ -40,17 +42,18 @@ pages/              ← 5 个页面，UI + 组装，不含业务规则
 
 ## 核心数据流
 
-1. **首页 index**：人体图选部位 → 罗盘选体感 → `utils/recommend.ts` 规则排序出 TOP3 → 点方案进 prepare
-2. **准备页 prepare**：`?id=` 传方案 id（`onLoad` options 读取），展示禁忌 + 三阶段流程，底部常驻免责条
-3. **仪式页 player**：状态机 `count → run → finish → result`；180s 固定结构 = 调息 60s + 动作 90s + 收尾 30s（`PHASE_ENDS = [60, 150, 180]`，动作阶段按 `steps` 均分），结束打卡 `+10`
-4. **档案页 profile**：未建档 → 3 问打分；已建档 → 身体说明书 + 蓄电条 + 竹叶日历
-5. **锦囊页 gear**：关于 + 免责全文 + 清除本地数据
+1. **首页 index**：点人体图热区 → 直达部位方案页（v2 快路径）；已建档用户展示千人千面置顶
+2. **部位页 area**：`?id=` 传部位 id，该部位方案在前（最常用 = 方案库策展顺序）+ 全身通用兜底在后，点方案进 prepare
+3. **准备页 prepare**：`?id=` 传方案 id（`onLoad` options 读取），展示禁忌 + 三阶段流程，底部常驻免责条
+4. **仪式页 player**：状态机 `count → run → finish → result`；180s 固定结构 = 调息 60s + 动作 90s + 收尾 30s（`PHASE_ENDS = [60, 150, 180]`，动作阶段按 `steps` 均分），结束打卡 `+10`
+5. **档案页 profile**：未建档 → 3 问打分；已建档 → 身体说明书 + 蓄电条 + 竹叶日历
+6. **锦囊页 gear**：关于 + 免责全文 + 清除本地数据
 
 页面间传参只走 URL query（`?id=xxx`），无状态管理库；跨页共享的只有 `utils/app-state.ts` 的会话级 reactive 状态。
 
 ## 关键规则（散落在多处，改动时需一致）
 
-- **推荐排序**（`utils/recommend.ts`）：体感命中 +5 > 部位命中 +3 > 体质品类偏好 +2（每品类），纯规则无算法。千人千面置顶 = 按体质 `preferredCategories` 过滤方案 `categories`。
+- **推荐排序**（`utils/recommend.ts`）：部位页 `sortForArea()`（部位方案在前 + 全身通用兜底，均保持方案库策展顺序 = 最常用优先）；千人千面 `topByConstitution()`（按体质 `preferredCategories` 过滤方案 `categories`）。体感维度已删除（v2 决策：罗盘与体感整体移除，口语体感词由未来 AI 检索的 aliases 承接）。
 - **体质打分**（`utils/constitution.ts`）：3 问、每题选项严格倾向冷/热之一（无中立），冷热总分必不同 → 必出 `bingbing` 或 `yiran`，**没有「平和」兜底类型**（PRD 决策）。
 - **蓄电条**（`utils/checkin.ts`）：电量由打卡记录**推导**，从不单独存储——今日打卡次数 × 10，上限 100，每日重置。`CheckinRecord` 是蓄电条和竹叶日历的唯一数据源。
 - **打卡记录**：`date` 字段格式 `YYYY-MM-DD`（`utils/date.ts` 的 `todayKey()` 生成），全项目统一。
@@ -63,4 +66,4 @@ pages/              ← 5 个页面，UI + 组装，不含业务规则
 2. **常驻免责**：每次冷启动开屏免责（`appState.splashConfirmed`，仅内存、冷启动重置）；方案页底部 `disclaimer-bar mode="bar"` 不可隐藏。免责文案唯一来源是 `data/compliance.ts`。
 3. **安全红绿灯**：每个 `RemedyPlan` 强制有 `contraindications` 字段（缺字段即不合规）；`safety` 为 red 的方案暂不建议进行。
 
-**新增一个自愈方案 checklist**：`data/remedies.ts` 加条目 → 填齐 `contraindications` → 文案用去疾病化身体语言 → 动作步骤需在 90s 内合理分配 → 跑 `node scripts/check-content.js` 通过。
+**新增一个自愈方案 checklist**：`data/remedies.ts` 加条目 → `areas` 用细分部位 id（head/neck/shoulder/waist/belly/limbs/whole，见 `data/areas.ts`）→ 填齐 `contraindications` → 文案用去疾病化身体语言 → 动作步骤需在 90s 内合理分配 → 跑 `node scripts/check-content.js` 通过。
