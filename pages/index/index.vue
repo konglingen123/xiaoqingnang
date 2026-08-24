@@ -12,6 +12,13 @@
       <view v-else class="chip chip-empty" @tap="goProfile">建立身体说明书</view>
     </view>
 
+    <!-- AI 搜索入口（阶段二：本地规则检索） -->
+    <view class="search-card" @tap="goAi">
+      <text class="search-emoji">🎋</text>
+      <text class="search-ph">说说你哪里不舒坦，帮你找方案…</text>
+      <text class="search-arrow">›</text>
+    </view>
+
     <!-- 人体图：点哪里，去哪里（v2 快路径） -->
     <view class="card wizard">
       <view class="figure-hint">哪里不舒坦？轻点图上部位</view>
@@ -93,6 +100,10 @@ function onSelectArea(e: any) {
   uni.navigateTo({ url: '/pages/area/area?id=' + e.areaId })
 }
 
+function goAi() {
+  uni.navigateTo({ url: '/pages/ai/ai' })
+}
+
 function goPrepare(id: string) {
   uni.navigateTo({ url: '/pages/prepare/prepare?id=' + id })
 }
@@ -140,6 +151,31 @@ function onConfirmSplash() {
 .chip-empty {
   background: transparent;
   border: 2rpx solid var(--c-bamboo);
+  color: var(--c-bamboo);
+}
+
+/* AI 搜索入口 */
+.search-card {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin: 8rpx 32rpx 24rpx;
+  background: var(--c-card);
+  border: 2rpx solid var(--c-line);
+  border-radius: 999rpx;
+  padding: 20rpx 32rpx;
+  box-shadow: 0 8rpx 32rpx rgba(51, 65, 58, 0.05);
+}
+.search-emoji {
+  font-size: 30rpx;
+}
+.search-ph {
+  flex: 1;
+  font-size: 26rpx;
+  color: var(--c-ink-soft);
+}
+.search-arrow {
+  font-size: 32rpx;
   color: var(--c-bamboo);
 }
 

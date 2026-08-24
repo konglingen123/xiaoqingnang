@@ -34,6 +34,12 @@
       }
     },
     {
+      "path": "pages/ai/ai",
+      "style": {
+        "navigationBarTitleText": "问问小青囊"
+      }
+    },
+    {
       "path": "pages/player/player",
       "style": {
         "navigationBarTitleText": "自愈仪式",
