@@ -41,3 +41,20 @@ export function clearAll(): void {
   uni.removeStorageSync(PROFILE_KEY)
   uni.removeStorageSync(CHECKIN_KEY)
 }
+
+const AI_MISS_KEY = 'xqn_ai_misses'
+
+/** AI 未命中记录（方案库扩充的依据；后续随云端迁移） */
+export function getAiMisses(): string[] {
+  try {
+    return uni.getStorageSync(AI_MISS_KEY) || []
+  } catch (e) {
+    return []
+  }
+}
+
+export function logAiMiss(query: string): void {
+  const list = getAiMisses()
+  list.push(query)
+  uni.setStorageSync(AI_MISS_KEY, list.slice(-50))
+}
