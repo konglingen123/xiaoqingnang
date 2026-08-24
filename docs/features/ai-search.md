@@ -137,5 +137,5 @@ interface AiSessionRecord {
 | --- | --- | --- | --- |
 | 一 | 人体图热区细分 + 部位方案页（纯前端） | 无 | ✅ 已上线 |
 | 二 | 规则版搜索框 + 对话交互（本地模拟 AI） | 阶段一 | ✅ 已实现（utils/intent.ts + pages/ai/ai） |
-| 三 | uniCloud + 混元真接入，流式（打字机降级） | uniCloud 空间开通 | ⏳ 待部署验证 |
+| 三 | uniCloud + 混元真接入，流式（打字机降级） | uniCloud 空间开通 | ✅ 代码就位（uniCloud-aliyun/cloudfunctions/ai-chat），待开通空间 + 配置 HUNYUAN_API_KEY 验证 |
 | 四 | 企业主体 + 备案齐全，AI 上架 + 会员 | 企业主体、备案 | ⏳ 待资质 |

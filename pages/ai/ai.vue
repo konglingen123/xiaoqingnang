@@ -14,6 +14,7 @@
           <view class="ai-avatar">🎋</view>
           <view class="ai-body">
             <view v-if="m.text" :class="['ai-text', m.redFlag ? 'text-red' : '']">{{ m.text }}</view>
+            <view v-if="m.aiGenerated" class="ai-gen-tag">内容由 AI 生成</view>
 
             <!-- 方案卡 -->
             <view v-if="m.planIds && m.planIds.length" class="plan-list">
@@ -74,6 +75,7 @@ interface Msg {
   chips?: string[]
   redFlag?: boolean
   miss?: boolean
+  aiGenerated?: boolean
 }
 
 const messages = ref<Msg[]>([])
@@ -131,11 +133,9 @@ function respond(q: string) {
     return
   }
 
-  // 未命中兜底：温和话术 + 全身通用方案 + 反馈入口
+  // 未命中：先试云函数（阶段三 LLM），不可用则本地兜底话术
   if (r.hitType === 'none') {
-    const ids = wholeIds(2)
-    assistant({ text: AI_FALLBACK_TEXT, planIds: ids, miss: true })
-    lastCandidates.value = ids
+    tryCloud(q)
     return
   }
 
@@ -150,6 +150,42 @@ function respond(q: string) {
 
 function wholeIds(limit: number): string[] {
   return REMEDIES.filter((p) => p.areas.indexOf('whole') >= 0).slice(0, limit).map((p) => p.id)
+}
+
+/** 阶段三：未命中时尝试 uniCloud 云函数（LLM 检索），失败静默走本地兜底 */
+async function tryCloud(q: string) {
+  let cloudHit = false
+  if (typeof uniCloud !== 'undefined') {
+    try {
+      const history = messages.value
+        .filter((m) => m.role === 'user')
+        .map((m) => m.text)
+        .slice(-3, -1)
+      const res = await uniCloud.callFunction({ name: 'ai-chat', data: { query: q, history } })
+      const d = res && res.result
+      if (d && d.ok && d.redFlag) {
+        assistant({ text: AI_REDFLAG_TEXT, redFlag: true })
+        return
+      }
+      if (d && d.ok && d.llm && d.planIds && d.planIds.length) {
+        assistant({
+          text: d.text + '（内容由 AI 生成）',
+          planIds: d.planIds,
+          chips: PREF_CHIPS,
+          aiGenerated: true
+        })
+        lastCandidates.value = d.planIds
+        cloudHit = true
+      }
+    } catch (e) {
+      // 未开通 uniCloud / 云函数不存在：静默走本地兜底
+    }
+  }
+  if (!cloudHit) {
+    const ids = wholeIds(2)
+    assistant({ text: AI_FALLBACK_TEXT, planIds: ids, miss: true })
+    lastCandidates.value = ids
+  }
 }
 
 function goPrepare(id: string) {
@@ -231,6 +267,11 @@ function onRecordMiss() {
   border-left: 8rpx solid var(--c-red);
   color: #A84234;
   font-weight: 500;
+}
+.ai-gen-tag {
+  margin-top: 8rpx;
+  font-size: 20rpx;
+  color: var(--c-ink-soft);
 }
 
 /* 方案卡 */
