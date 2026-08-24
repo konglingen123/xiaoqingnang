@@ -38,3 +38,11 @@ export function topByConstitution(plans: RemedyPlan[], constitutionId: Constitut
     .filter((p) => p.categories.some((c) => con.preferredCategories.indexOf(c) >= 0))
     .slice(0, limit)
 }
+
+/** 部位方案页排序：该部位方案在前，全身通用兜底在后（均保持方案库策展顺序 = 最常用优先） */
+export function sortForArea(plans: RemedyPlan[], areaId: string): RemedyPlan[] {
+  if (areaId === 'whole') return plans.filter((p) => p.areas.indexOf('whole') >= 0)
+  const own = plans.filter((p) => p.areas.indexOf(areaId) >= 0)
+  const fallback = plans.filter((p) => p.areas.indexOf(areaId) < 0 && p.areas.indexOf('whole') >= 0)
+  return own.concat(fallback)
+}

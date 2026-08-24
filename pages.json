@@ -28,6 +28,12 @@
       }
     },
     {
+      "path": "pages/area/area",
+      "style": {
+        "navigationBarTitleText": "舒缓方案"
+      }
+    },
+    {
       "path": "pages/player/player",
       "style": {
         "navigationBarTitleText": "自愈仪式",
