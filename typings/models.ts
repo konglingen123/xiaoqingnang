@@ -36,13 +36,6 @@ export interface AreaItem {
   subtitle: string   // 部位方案页副题文案（人话调性）
 }
 
-/** 罗盘体感 */
-export interface FeelingItem {
-  id: string
-  name: string
-  emoji: string
-}
-
 /** 安全红绿灯（合规红线 3） */
 export type SafetyLevel = 'green' | 'yellow' | 'red'
 
@@ -59,7 +52,6 @@ export interface RemedyPlan {
   motto: string
   desc: string
   areas: string[]        // 适用部位
-  feelings: string[]     // 适用体感
   categories: string[]   // 品类标签（驱动千人千面）
   safety: SafetyLevel    // 红绿灯
   contraindications: string[]  // 强制字段：每个方案必须标明禁忌

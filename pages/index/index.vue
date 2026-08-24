@@ -12,54 +12,11 @@
       <view v-else class="chip chip-empty" @tap="goProfile">建立身体说明书</view>
     </view>
 
-    <!-- 体感直觉卡片 -->
+    <!-- 人体图：点哪里，去哪里（v2 快路径） -->
     <view class="card wizard">
-      <view class="wizard-step">
-        <text class="step-no">壹</text>
-        <view class="step-body">
-          <view class="step-label">今天，哪里不舒展？</view>
-          <view class="step-state">{{ areaName || '轻点图中部位' }}</view>
-        </view>
-      </view>
-
+      <view class="figure-hint">哪里不舒坦？轻点图上部位</view>
       <body-figure :selected="selectedArea" @select="onSelectArea" />
-
-      <template v-if="selectedArea">
-        <view class="wizard-step">
-          <text class="step-no">贰</text>
-          <view class="step-body">
-            <view class="step-label">它是什么感觉？</view>
-            <view class="step-state">{{ feelingName || '拨动罗盘，选一种感觉' }}</view>
-          </view>
-        </view>
-        <compass-card :feelings="feelings" :selected="selectedFeeling" @select="onSelectFeeling" />
-      </template>
-      <view v-else class="hint">先轻点图上不舒服的部位</view>
-
-      <view class="random-btn" @tap="onRandomAll">🎋 听罗盘的，替我选</view>
     </view>
-
-    <!-- 匹配方案 -->
-    <template v-if="matched.length">
-      <view class="section-title standalone">为你匹配的自愈方案</view>
-      <view
-        v-for="(item, index) in matched"
-        :key="item.id"
-        :class="['card', 'plan-card', index === 0 ? 'plan-top' : '']"
-        @tap="goPrepare(item.id)"
-      >
-        <view class="plan-name">
-          <text>{{ item.name }}</text>
-          <text v-if="index === 0" class="tag">最合身</text>
-        </view>
-        <view class="plan-motto">{{ item.motto }}</view>
-        <view class="plan-meta">
-          <text :class="['dot', 'dot-' + item.safety]"></text>
-          <text>{{ item.tagsText }}</text>
-          <text class="plan-go">开始 ›</text>
-        </view>
-      </view>
-    </template>
 
     <!-- 千人千面 -->
     <view v-if="!profile" class="card onboard-hint" @tap="goProfile">
@@ -93,29 +50,19 @@
 
 <script setup lang="ts">
 /**
- * 首页 · 体感直觉卡片主流程
- * 选部位（人体图）→ 选体感（罗盘）→ 自动匹配方案；「听罗盘的」一键随机治选择焦虑。
- * 千人千面：已建档用户首页置顶体质偏好的方案品类。
+ * 首页 · 人体图快路径（v2）
+ * 点击热区 → 直达该部位的方案页；千人千面：已建档用户置顶体质偏好的方案品类。
  * 合规：每次冷启动展示开屏免责提示，需确认后进入。
  */
 import { ref } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
-import { AREAS } from '../../data/areas'
-import { FEELINGS } from '../../data/feelings'
 import { REMEDIES } from '../../data/remedies'
 import { CONSTITUTIONS } from '../../data/constitution'
 import { getProfile } from '../../utils/storage'
-import { sortPlans, topByConstitution } from '../../utils/recommend'
+import { topByConstitution } from '../../utils/recommend'
 import { appState } from '../../utils/app-state'
 
-const areas = AREAS
-const feelings = FEELINGS
-
 const selectedArea = ref('')
-const selectedFeeling = ref('')
-const areaName = ref('')
-const feelingName = ref('')
-const matched = ref<any[]>([])
 const topPlans = ref<any[]>([])
 const profile = ref<any>(null)
 const constitution = ref<any>(null)
@@ -125,24 +72,11 @@ function decorate(p: any) {
   return { ...p, tagsText: p.categories.join(' · ') }
 }
 
-function buildMatched(): any[] {
-  return sortPlans(REMEDIES, {
-    area: selectedArea.value,
-    feeling: selectedFeeling.value,
-    constitutionId: profile.value ? profile.value.constitutionId : undefined
-  })
-    .slice(0, 3)
-    .map(decorate)
-}
-
 function refresh() {
   const p = getProfile()
   profile.value = p
   constitution.value = p ? CONSTITUTIONS[p.constitutionId] : null
   topPlans.value = p ? topByConstitution(REMEDIES, p.constitutionId).map(decorate) : []
-  if (selectedArea.value && selectedFeeling.value) {
-    matched.value = buildMatched()
-  }
 }
 
 onShow(() => {
@@ -153,33 +87,10 @@ onShow(() => {
   }
 })
 
+/** 点击热区 → 直达该部位的方案页 */
 function onSelectArea(e: any) {
-  const id = e.id
-  const area = AREAS.find((a) => a.id === id)
-  selectedArea.value = id
-  areaName.value = area ? area.name : ''
-  selectedFeeling.value = ''
-  feelingName.value = ''
-  matched.value = []
-}
-
-function onSelectFeeling(e: any) {
-  const id = e.id
-  const feeling = FEELINGS.find((f) => f.id === id)
-  selectedFeeling.value = id
-  feelingName.value = feeling ? feeling.name : ''
-  matched.value = buildMatched()
-}
-
-/** 「听罗盘的，替我选」：部位 + 体感全随机，一键出方案 */
-function onRandomAll() {
-  const area = AREAS[Math.floor(Math.random() * AREAS.length)]
-  const feeling = FEELINGS[Math.floor(Math.random() * FEELINGS.length)]
-  selectedArea.value = area.id
-  areaName.value = area.name
-  selectedFeeling.value = feeling.id
-  feelingName.value = feeling.name
-  matched.value = buildMatched()
+  selectedArea.value = e.id
+  uni.navigateTo({ url: '/pages/area/area?id=' + e.id })
 }
 
 function goPrepare(id: string) {
@@ -232,44 +143,13 @@ function onConfirmSplash() {
   color: var(--c-bamboo);
 }
 
-/* 体感卡片向导 */
-.wizard-step {
-  display: flex;
-  align-items: center;
-  gap: 20rpx;
-  margin-bottom: 8rpx;
-}
-.step-no {
-  width: 52rpx;
-  height: 52rpx;
-  line-height: 52rpx;
+/* 人体图卡片 */
+.figure-hint {
   text-align: center;
-  background: var(--c-bamboo-light);
-  color: var(--c-bamboo-deep);
-  border-radius: 50%;
-  font-size: 24rpx;
-  flex-shrink: 0;
-}
-.step-label {
-  font-size: 30rpx;
+  font-size: 28rpx;
   font-weight: 600;
   color: var(--c-ink);
-}
-.step-state {
-  font-size: 24rpx;
-  color: var(--c-ginger);
-  margin-top: 2rpx;
-}
-
-.random-btn {
-  margin: 8rpx auto 0;
-  text-align: center;
-  color: var(--c-bamboo);
-  font-size: 26rpx;
-  border: 2rpx dashed var(--c-bamboo-light);
-  border-radius: 999rpx;
-  padding: 16rpx 0;
-  width: 420rpx;
+  margin-bottom: 24rpx;
 }
 
 /* 方案卡片 */
@@ -279,10 +159,6 @@ function onConfirmSplash() {
 .plan-card {
   border-left: 8rpx solid transparent;
 }
-.plan-top {
-  border-left-color: var(--c-bamboo);
-  background: linear-gradient(90deg, #F3F8F1, #FFFDF7 40%);
-}
 .plan-name {
   display: flex;
   align-items: center;
@@ -290,14 +166,6 @@ function onConfirmSplash() {
   font-size: 32rpx;
   font-weight: 600;
   color: var(--c-ink);
-}
-.tag {
-  font-size: 20rpx;
-  color: #ffffff;
-  background: var(--c-bamboo);
-  padding: 4rpx 16rpx;
-  border-radius: 999rpx;
-  font-weight: 400;
 }
 .plan-motto {
   font-size: 26rpx;

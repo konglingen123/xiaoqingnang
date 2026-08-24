@@ -12,7 +12,6 @@ export const REMEDIES: RemedyPlan[] = [
     motto: '把暖意，敷在肩上',
     desc: '用掌心的温度轻敷颈后，让绷了一天的肩颈慢慢松开。适合发冷、紧绷的肩颈。',
     areas: ['neck', 'shoulder'],
-    feelings: ['cold', 'tight', 'sore'],
     categories: ['温敷', '驱寒', '舒展'],
     safety: 'green',
     contraindications: [
@@ -35,7 +34,6 @@ export const REMEDIES: RemedyPlan[] = [
     motto: '掌心的暖，是最好的安抚',
     desc: '双手交叠轻放腹部，用温度与呼吸安抚发凉、发胀的小腹。',
     areas: ['belly'],
-    feelings: ['cold', 'bloat'],
     categories: ['温敷', '温通'],
     safety: 'yellow',
     contraindications: [
@@ -59,7 +57,6 @@ export const REMEDIES: RemedyPlan[] = [
     motto: '脚暖了，全身都松了',
     desc: '一盆温热的水，一次给双脚的温柔小憩，驱走从脚底蔓延的凉意与疲惫。',
     areas: ['limbs'],
-    feelings: ['cold', 'heavy', 'tired'],
     categories: ['驱寒', '温通'],
     safety: 'green',
     contraindications: [
@@ -83,7 +80,6 @@ export const REMEDIES: RemedyPlan[] = [
     motto: '像云一样，慢慢松开',
     desc: '用一组轻柔的肩颈动作，把紧绷了一天的僵硬慢慢化开。',
     areas: ['neck', 'shoulder'],
-    feelings: ['tight', 'sore'],
     categories: ['舒展'],
     safety: 'green',
     contraindications: [
@@ -106,7 +102,6 @@ export const REMEDIES: RemedyPlan[] = [
     motto: '给身体，重新对个位',
     desc: '坐姿轻柔侧展与扭转，帮久坐的身体找回舒展的秩序。',
     areas: ['waist', 'shoulder'],
-    feelings: ['heavy', 'sore', 'tired'],
     categories: ['舒展'],
     safety: 'green',
     contraindications: [
@@ -129,7 +124,6 @@ export const REMEDIES: RemedyPlan[] = [
     motto: '一呼一吸，把燥气送走',
     desc: '用清凉意象的呼吸练习，帮燥热烦闷的身体找回一丝清透。',
     areas: ['whole', 'head'],
-    feelings: ['heat', 'restless'],
     categories: ['清透', '安神'],
     safety: 'green',
     contraindications: [
@@ -151,7 +145,6 @@ export const REMEDIES: RemedyPlan[] = [
     motto: '给脸，洗一场凉凉的细雨',
     desc: '用微凉的湿巾轻敷面颊与额头，安抚燥热紧绷的感觉。',
     areas: ['head'],
-    feelings: ['heat', 'restless'],
     categories: ['润爽', '清透'],
     safety: 'green',
     contraindications: [
@@ -174,7 +167,6 @@ export const REMEDIES: RemedyPlan[] = [
     motto: '把身体，交给一朵云',
     desc: '三分钟安静的闭目小憩，让紧绷的神经像躺进云朵里一样软下来。',
     areas: ['whole', 'head'],
-    feelings: ['tired', 'restless', 'heavy'],
     categories: ['安神'],
     safety: 'yellow',
     contraindications: [
@@ -197,7 +189,6 @@ export const REMEDIES: RemedyPlan[] = [
     motto: '十指一动，精神回来',
     desc: '一组轻快的手指操，让发沉的手和混沌的脑袋一起醒过来。',
     areas: ['limbs'],
-    feelings: ['heavy', 'tired', 'tight'],
     categories: ['舒展', '活络'],
     safety: 'green',
     contraindications: [
@@ -219,7 +210,6 @@ export const REMEDIES: RemedyPlan[] = [
     motto: '气沉下来，人就稳了',
     desc: '把呼吸从胸口移到腹部，用最省力的方式安抚浮躁的身体。',
     areas: ['whole', 'belly'],
-    feelings: ['tired', 'restless', 'heavy'],
     categories: ['安神', '清透'],
     safety: 'green',
     contraindications: [
