@@ -25,12 +25,8 @@
       <body-figure :selected="selectedArea" @select="onSelectArea" />
     </view>
 
-    <!-- 千人千面 -->
-    <view v-if="!profile" class="card onboard-hint" @tap="goProfile">
-      <view class="hint-title">🌱 建立你的身体说明书</view>
-      <view class="hint-desc">回答 3 个小问题，首页会为你优先推荐合适的方案</view>
-    </view>
-    <template v-else>
+    <!-- 千人千面（建档引导只保留顶部 chip） -->
+    <template v-if="profile">
       <view class="section-title standalone">为你优选 · 按体质定制</view>
       <view
         v-for="item in topPlans"
@@ -232,22 +228,6 @@ function onConfirmSplash() {
 .plan-go {
   margin-left: auto;
   color: var(--c-bamboo);
-}
-
-/* 建档引导 */
-.onboard-hint {
-  background: linear-gradient(135deg, #F0F6EC, #FFFDF7);
-  border: 2rpx dashed var(--c-bamboo-light);
-}
-.hint-title {
-  font-size: 30rpx;
-  font-weight: 600;
-  color: var(--c-ink);
-}
-.hint-desc {
-  font-size: 24rpx;
-  color: var(--c-ink-soft);
-  margin-top: 8rpx;
 }
 
 .footer-space {

@@ -33,7 +33,7 @@ typings/models.ts   ← 领域模型唯一数据契约，所有层共同引用
 data/               ← 内容数据（全部数据驱动：方案、体质、题库、部位、合规文案）
 utils/              ← 纯逻辑层，与框架解耦（不 import 任何 .vue）
 components/         ← 通用组件，easycom 按目录名自动注册（无需手动 import/注册）
-pages/              ← 6 个页面，UI + 组装，不含业务规则
+pages/              ← 7 个页面，UI + 组装，不含业务规则
 ```
 
 - **换数据不改代码**：新增/修改方案、题库、部位等，只改 `data/`。
@@ -42,18 +42,20 @@ pages/              ← 6 个页面，UI + 组装，不含业务规则
 
 ## 核心数据流
 
-1. **首页 index**：点人体图热区 → 直达部位方案页（v2 快路径）；已建档用户展示千人千面置顶
-2. **部位页 area**：`?id=` 传部位 id，该部位方案在前（最常用 = 方案库策展顺序）+ 全身通用兜底在后，点方案进 prepare
-3. **准备页 prepare**：`?id=` 传方案 id（`onLoad` options 读取），展示禁忌 + 三阶段流程，底部常驻免责条
-4. **仪式页 player**：状态机 `count → run → finish → result`；180s 固定结构 = 调息 60s + 动作 90s + 收尾 30s（`PHASE_ENDS = [60, 150, 180]`，动作阶段按 `steps` 均分），结束打卡 `+10`
-5. **档案页 profile**：未建档 → 3 问打分；已建档 → 身体说明书 + 蓄电条 + 竹叶日历
-6. **锦囊页 gear**：关于 + 免责全文 + 清除本地数据
+1. **首页 index**：顶部搜索框 → AI 对话页；点人体图热区 → 直达部位方案页（v2 快路径）；已建档用户展示千人千面置顶
+2. **对话页 ai**：规则引擎意图解析（`utils/intent.ts`）——红旗词就医话术 / 方案直返 / 部位直返 / 未命中兜底，chips 快答追问偏好
+3. **部位页 area**：`?id=` 传部位 id，该部位方案在前（最常用 = 方案库策展顺序）+ 全身通用兜底在后，点方案进 prepare
+4. **准备页 prepare**：`?id=` 传方案 id（`onLoad` options 读取），展示禁忌 + 三阶段流程，底部常驻免责条
+5. **仪式页 player**：状态机 `count → run → finish → result`；180s 固定结构 = 调息 60s + 动作 90s + 收尾 30s（`PHASE_ENDS = [60, 150, 180]`，动作阶段按 `steps` 均分），结束打卡 `+10`
+6. **档案页 profile**：未建档 → 3 问打分；已建档 → 身体说明书 + 蓄电条 + 竹叶日历
+7. **锦囊页 gear**：关于 + 免责全文 + 清除本地数据
 
 页面间传参只走 URL query（`?id=xxx`），无状态管理库；跨页共享的只有 `utils/app-state.ts` 的会话级 reactive 状态。
 
 ## 关键规则（散落在多处，改动时需一致）
 
-- **推荐排序**（`utils/recommend.ts`）：部位页 `sortForArea()`（部位方案在前 + 全身通用兜底，均保持方案库策展顺序 = 最常用优先）；千人千面 `topByConstitution()`（按体质 `preferredCategories` 过滤方案 `categories`）。体感维度已删除（v2 决策：罗盘与体感整体移除，口语体感词由未来 AI 检索的 aliases 承接）。
+- **推荐排序**（`utils/recommend.ts`）：部位页 `sortForArea()`（部位方案在前 + 全身通用兜底，均保持方案库策展顺序 = 最常用优先）；千人千面 `topByConstitution()`（按体质 `preferredCategories` 过滤方案 `categories`）。体感维度已删除（v2 决策：罗盘与体感整体移除，口语体感词由 AI 检索的 aliases 承接）。
+- **AI 意图解析**（`utils/intent.ts`，阶段二本地模拟 AI）：匹配顺序 = 红旗词 → 方案别名 → 方案场景词 → 部位别名 → 未命中（别名两遍制：具体词优先于泛词）；`applyPreference` 做偏好过滤（不想泡脚/办公室/睡前/安静）。阶段三接 LLM 只替换未命中分支，见 `docs/features/ai-search.md`。
 - **体质打分**（`utils/constitution.ts`）：3 问、每题选项严格倾向冷/热之一（无中立），冷热总分必不同 → 必出 `bingbing` 或 `yiran`，**没有「平和」兜底类型**（PRD 决策）。
 - **蓄电条**（`utils/checkin.ts`）：电量由打卡记录**推导**，从不单独存储——今日打卡次数 × 10，上限 100，每日重置。`CheckinRecord` 是蓄电条和竹叶日历的唯一数据源。
 - **打卡记录**：`date` 字段格式 `YYYY-MM-DD`（`utils/date.ts` 的 `todayKey()` 生成），全项目统一。
@@ -65,5 +67,6 @@ pages/              ← 6 个页面，UI + 组装，不含业务规则
 1. **去疾病化文案**：禁用词表在 `data/compliance.ts` 的 `BANNED_WORDS` 与 `scripts/check-content.js` 中**各存一份、必须同步**（脚本跳过 compliance.ts 以免词表误伤自己）。改禁用词要两处一起改。替换参考 `REPLACE_MAP`（如 感冒→受凉）。
 2. **常驻免责**：每次冷启动开屏免责（`appState.splashConfirmed`，仅内存、冷启动重置）；方案页底部 `disclaimer-bar mode="bar"` 不可隐藏。免责文案唯一来源是 `data/compliance.ts`。
 3. **安全红绿灯**：每个 `RemedyPlan` 强制有 `contraindications` 字段（缺字段即不合规）；`safety` 为 red 的方案暂不建议进行。
+4. **AI 对话**：红旗词（发烧/剧痛/出血/晕倒/胸闷等，见 `RED_FLAGS`）命中 → 输出固定就医话术、终止推荐、不经任何生成；对话页常驻「建议不构成医疗意见」。红旗词与话术唯一来源 `data/compliance.ts`（可含禁用词，靠合规脚本跳过该文件），不可复制到其他源文件。
 
-**新增一个自愈方案 checklist**：`data/remedies.ts` 加条目 → `areas` 用细分部位 id（head/neck/shoulder/waist/belly/limbs/whole，见 `data/areas.ts`）→ 填齐 `contraindications` → 文案用去疾病化身体语言 → 动作步骤需在 90s 内合理分配 → 跑 `node scripts/check-content.js` 通过。
+**新增一个自愈方案 checklist**：`data/remedies.ts` 加条目 → `areas` 用细分部位 id（head/neck/shoulder/waist/belly/limbs/whole，见 `data/areas.ts`）→ 补齐 `aliases`/`scenarios`（口语别名 + 场景词，AI 检索匹配的关键）→ 填齐 `contraindications` → 文案用去疾病化身体语言 → 动作步骤需在 90s 内合理分配 → 跑 `node scripts/check-content.js` 通过。

@@ -35,13 +35,15 @@
 ├── uni.scss               # 全局 SCSS 变量（HBuilderX 约定文件）
 ├── typings/               # 全局声明 + 领域模型（models.ts 是数据契约）
 ├── data/                  # 内容数据（全部数据驱动）
-│   ├── compliance.ts        # 禁用词表 + 免责文案（合规单一数据源）
-│   ├── remedies.ts          # 自愈方案库（含禁忌、三阶段文案）
+│   ├── compliance.ts        # 禁用词表 + 免责文案 + AI 红旗词（合规单一数据源）
+│   ├── remedies.ts          # 自愈方案库（含禁忌、三阶段文案、AI 检索字段）
+│   ├── areas.ts             # 人体图 7 细分部位（含口语别名）
 │   ├── constitution.ts      # 体质体系（冰冰/易燃）
 │   └── questionnaire.ts     # 建档 3 问
 ├── utils/                 # 工具层（与框架解耦，换端可复用）
 │   ├── storage.ts           # 存储抽象层（第一版本地，后续可换云开发）
 │   ├── recommend.ts         # 推荐引擎（客户端规则排序）
+│   ├── intent.ts            # AI 搜索意图解析（红旗词→方案→部位→兜底）
 │   ├── constitution.ts      # 体质打分引擎
 │   ├── checkin.ts           # 打卡与蓄电条
 │   └── app-state.ts         # 会话级状态（开屏免责确认）
@@ -50,7 +52,7 @@
 │   ├── body-figure          # 人体图（纯 CSS 剪影 + 热区，点击直达部位方案页）
 │   ├── battery-bar          # 身体蓄电条（10 节竹节）
 │   └── bamboo-calendar      # 竹叶日历（打卡点亮）
-├── pages/                 # index 首页 / area 部位方案 / prepare 准备 / player 仪式 / profile 档案 / gear 锦囊
+├── pages/                 # index 首页 / ai 问问小青囊 / area 部位方案 / prepare 准备 / player 仪式 / profile 档案 / gear 锦囊
 └── scripts/               # 合规扫描脚本
 ```
 
@@ -60,6 +62,7 @@
 | --- | --- |
 | Tab 结构 | 3 Tab：自愈（首页）/ 档案 / 锦囊；准备页与播放器为跳转页 |
 | 首页交互（v2） | 点人体图热区直达部位方案页；罗盘与体感维度已删除 |
+| AI 搜索（阶段二） | 本地规则检索：红旗词就医话术 → 方案直返 → 部位直返 → 兜底；LLM 版见 `docs/features/ai-search.md` |
 | 仪式结构 | 调息 60s（呼吸动画）→ 动作 90s（步骤自动推进）→ 收尾 30s，共 180s |
 | 音视频素材 | 第一版视觉引导为主（深色沉浸场景 + 呼吸动画），素材位后续插入 |
 | 蓄电条 | 今日电量：每次 +10，满格 100，每日重置、只涨不掉 |
@@ -78,7 +81,7 @@ node scripts/check-content.js
 
 ## 后续路线（待 PRD 确认）
 
-- [ ] AI 搜索（精确问题规则直返 + 模糊问题 LLM 兜底，方案见 `docs/features/ai-search.md`）
+- [ ] AI 搜索（规则版已上线；LLM 兜底待接 uniCloud + 混元，方案见 `docs/features/ai-search.md`）
 - [ ] 微信云开发 / uniCloud 迁移（档案/打卡跨设备存活）
 - [ ] 真实音视频素材接入（player 素材接口）
 - [ ] tabBar 图标与品牌视觉深化
