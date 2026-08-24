@@ -33,6 +33,7 @@ export interface AreaItem {
   id: string
   name: string
   hint: string
+  subtitle: string   // 部位方案页副题文案（人话调性）
 }
 
 /** 罗盘体感 */
