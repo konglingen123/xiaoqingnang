@@ -128,7 +128,7 @@ function respond(q: string) {
     const ids = pref.planIds.length
       ? pref.planIds
       : wholeIds(2)
-    assistant({ text: pref.note, planIds: ids, chips: PREF_CHIPS })
+    assistant({ text: pref.note || '好的，再看看这些方案：', planIds: ids, chips: PREF_CHIPS })
     lastCandidates.value = ids
     return
   }
