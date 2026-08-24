@@ -1,0 +1,67 @@
+{
+  "easycom": {
+    "autoscan": true
+  },
+  "pages": [
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "小青囊"
+      }
+    },
+    {
+      "path": "pages/profile/profile",
+      "style": {
+        "navigationBarTitleText": "身体档案"
+      }
+    },
+    {
+      "path": "pages/gear/gear",
+      "style": {
+        "navigationBarTitleText": "锦囊"
+      }
+    },
+    {
+      "path": "pages/prepare/prepare",
+      "style": {
+        "navigationBarTitleText": "自愈方案"
+      }
+    },
+    {
+      "path": "pages/player/player",
+      "style": {
+        "navigationBarTitleText": "自愈仪式",
+        "navigationBarBackgroundColor": "#26382D",
+        "navigationBarTextStyle": "white",
+        "backgroundColor": "#26382D",
+        "disableScroll": true
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarBackgroundColor": "#F8F4EB",
+    "navigationBarTitleText": "小青囊",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#F8F4EB"
+  },
+  "tabBar": {
+    "color": "#8A938B",
+    "selectedColor": "#3F6B50",
+    "backgroundColor": "#FDFBF5",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "自愈"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "档案"
+      },
+      {
+        "pagePath": "pages/gear/gear",
+        "text": "锦囊"
+      }
+    ]
+  }
+}
