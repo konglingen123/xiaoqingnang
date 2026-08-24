@@ -14,7 +14,7 @@
       <view
         v-for="p in parts"
         :key="p.id"
-        :class="['part-zone', selected === p.areaId ? 'active' : '']"
+        :class="['part-zone', selected === p.id ? 'active' : '']"
         :style="zoneStyle(p)"
         @tap="onTapPart(p)"
       ></view>
@@ -139,7 +139,8 @@ function switchSide(s: 'front' | 'back') {
 
 function onTapPart(p: PartDef) {
   tappedPart.value = p
-  emit('select', { id: p.areaId })
+  // zoneId 用于单区高亮，areaId 用于页面跳转（多个热区共享一个部位分区）
+  emit('select', { zoneId: p.id, areaId: p.areaId })
 }
 </script>
 

@@ -87,10 +87,10 @@ onShow(() => {
   }
 })
 
-/** 点击热区 → 直达该部位的方案页 */
+/** 点击热区 → 单区高亮 + 直达该部位的方案页 */
 function onSelectArea(e: any) {
-  selectedArea.value = e.id
-  uni.navigateTo({ url: '/pages/area/area?id=' + e.id })
+  selectedArea.value = e.zoneId
+  uni.navigateTo({ url: '/pages/area/area?id=' + e.areaId })
 }
 
 function goPrepare(id: string) {
