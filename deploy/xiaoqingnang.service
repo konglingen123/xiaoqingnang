@@ -1,0 +1,23 @@
+[Unit]
+Description=XiaoQingNang content service
+After=network.target
+
+[Service]
+Type=simple
+User=xiaoqingnang
+Group=xiaoqingnang
+WorkingDirectory=/opt/xiaoqingnang
+Environment=PORT=4173
+Environment=HOSTNAME=127.0.0.1
+Environment=XQN_DATABASE_FILE=/var/lib/xiaoqingnang/content.db
+Environment=XQN_UPLOAD_DIR=/var/lib/xiaoqingnang/uploads
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/node /opt/xiaoqingnang/.next/standalone/server.js
+Restart=on-failure
+RestartSec=3
+PrivateTmp=true
+NoNewPrivileges=true
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target

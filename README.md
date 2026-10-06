@@ -1,90 +1,70 @@
-# 小青囊 · 微不适轻养生自愈小程序
+# 小青囊
 
-当身体发出小小的不适信号（受凉发冷、食滞腹胀、疲劳紧绷），给你一个 3 分钟的温柔回应。
+把公众号里的中式日常养护资料，整理成更容易搜索、阅读和照着操作的 H5 内容库。
 
-**核心闭环**：人体图点部位直达舒缓方案（v2）→ 3 分钟自愈仪式 → 私人健康档案。
+## 当前产品
 
-**技术栈**：uni-app（Vue 3 + TypeScript）——一套代码，可运行到微信小程序 / App / H5。
+- 首页：自然语言搜索 / 人体模型切换。
+- 搜索结果：信息资料与养护方法卡片，先显示类型、阅读时间、工具和是否可跟做。
+- 人体点击：先选择身体正面/背面和头面细分位置，再进入对应资料搜索。
+- 详情：一页一条资料；空 Tab 自动隐藏；来源在当前页弹出。
+- 内容库：统一浏览全部、养护方法、信息资料。
+- 后台：同域名 `/admin/`，左侧可折叠菜单，按文章、方法、问题、穴位、专栏、来源审核、权限和备份分区；支持富文本、图片、GIF、视频、Word 导入、预览、发布和撤回。
+- 会员：当前为会员码内测，风险边界始终公开。
 
-## 如何运行
+当前版本没有正式步骤执行页。只有在真实步骤数据录入并审核后，才把“跟着做”作为方法的可选能力。
 
-### 方式一：H5 浏览器预览（最快）
+## 数据结构
 
-1. 用 HBuilderX 打开本项目目录（文件 → 导入 → 从本地目录导入）
-2. 菜单：运行 → 运行到浏览器 → Chrome
-3. 即可在浏览器中体验全部功能（数据存在浏览器本地）
-
-### 方式二：微信小程序模拟器
-
-1. 先安装 [微信开发者工具](https://developers.weixin.qq.com/miniprogram/dev/devtools/download.html)（稳定版）
-2. HBuilderX 中：运行 → 运行到小程序模拟器 → 微信开发者工具
-3. 首次运行会提示配置微信开发者工具路径（工具 → 设置 → 运行配置）
-4. AppID 用测试号即可；正式发布时在 `manifest.json` → 微信小程序配置中填自己的 AppID
-
-### 方式三：真机 / App
-
-- 真机预览：HBuilderX 运行 → 运行到手机或模拟器（需数据线连接）
-- 打包 App：发行 → 原生 App 云打包（个人开发者建议先以小程序为主）
-
-## 目录结构
-
-```
-├── App.vue / main.ts      # 应用入口 + 全局设计令牌（竹青×宣纸米白）
-├── manifest.json          # 应用配置（微信小程序 AppID 在此配置）
-├── pages.json             # 页面路由 + 3 Tab + 全局样式
-├── uni.scss               # 全局 SCSS 变量（HBuilderX 约定文件）
-├── typings/               # 全局声明 + 领域模型（models.ts 是数据契约）
-├── data/                  # 内容数据（全部数据驱动）
-│   ├── compliance.ts        # 禁用词表 + 免责文案 + AI 红旗词（合规单一数据源）
-│   ├── remedies.ts          # 自愈方案库（含禁忌、三阶段文案、AI 检索字段）
-│   ├── areas.ts             # 人体图 7 细分部位（含口语别名）
-│   ├── constitution.ts      # 体质体系（冰冰/易燃）
-│   └── questionnaire.ts     # 建档 3 问
-├── utils/                 # 工具层（与框架解耦，换端可复用）
-│   ├── storage.ts           # 存储抽象层（第一版本地，后续可换云开发）
-│   ├── recommend.ts         # 推荐引擎（客户端规则排序）
-│   ├── intent.ts            # AI 搜索意图解析（红旗词→方案→部位→兜底）
-│   ├── constitution.ts      # 体质打分引擎
-│   ├── checkin.ts           # 打卡与蓄电条
-│   └── app-state.ts         # 会话级状态（开屏免责确认）
-├── components/            # 自定义组件（easycom 自动注册）
-│   ├── disclaimer-bar       # 免责条（开屏/底部双形态，不可隐藏）
-│   ├── body-figure          # 人体图（纯 CSS 剪影 + 热区，点击直达部位方案页）
-│   ├── battery-bar          # 身体蓄电条（10 节竹节）
-│   └── bamboo-calendar      # 竹叶日历（打卡点亮）
-├── pages/                 # index 首页 / ai 问问小青囊 / area 部位方案 / prepare 准备 / player 仪式 / profile 档案 / gear 锦囊
-└── scripts/               # 合规扫描脚本
+```text
+后台一条资料
+  ├─ 信息资料 article
+  └─ 方法资料 skill
+        ↓ 发布接口
+前台 PublishedContentItem
+        ↓
+搜索 / 人体点击 / 内容库 / 单资料详情
 ```
 
-## 已定的产品决策
+后台数据存入 SQLite。前台只读取已发布、检查通过的内容，并在本地缓存用于断网回退。
 
-| 决策 | 说明 |
-| --- | --- |
-| Tab 结构 | 3 Tab：自愈（首页）/ 档案 / 锦囊；准备页与播放器为跳转页 |
-| 首页交互（v2） | 点人体图热区直达部位方案页；罗盘与体感维度已删除 |
-| AI 搜索（阶段二） | 本地规则检索：红旗词就医话术 → 方案直返 → 部位直返 → 兜底；LLM 版见 `docs/features/ai-search.md` |
-| 仪式结构 | 调息 60s（呼吸动画）→ 动作 90s（步骤自动推进）→ 收尾 30s，共 180s |
-| 音视频素材 | 第一版视觉引导为主（深色沉浸场景 + 呼吸动画），素材位后续插入 |
-| 蓄电条 | 今日电量：每次 +10，满格 100，每日重置、只涨不掉 |
-| 体质分型 | 仅冰冰 / 易燃两种，3 问必出结果（无中立选项，不做平和兜底） |
-| 千人千面 | 冰冰置顶温敷/驱寒，易燃置顶清透/润爽/舒展（规则排序，无算法） |
-| 数据存储 | 本地存储，经 `utils/storage.ts` 抽象，后续可无痛迁移云开发 |
-| 开屏免责 | 每次冷启动需点击「我已了解」确认（合规红线 2） |
+## 技术与地址
 
-## 合规检查
+- Next.js 16 + React 19 + TypeScript（前台、后台、API 统一 App Router）
+- Node.js 22+ + 原生 `node:sqlite`（保持现有 SQLite 数据）
+- Web / H5，同一套 Next 应用同时提供 `/`、`/chat`、`/anthology`、`/article/:id`、`/account`、`/admin/*` 与 `/api/*`
+- 生产使用 Next standalone 构建，不再依赖 HBuilderX 或独立原生 HTTP 服务
+- 正式地址：`https://xiaoqingnang.cn/`
+- 后台地址：`https://xiaoqingnang.cn/admin/`
+
+## 主要目录
+
+```text
+app/        Next.js App Router 页面与 API 路由
+src/lib/    SQLite 访问、数据规范化、权限与发布校验
+public/     Next.js 静态品牌、身体模型与内容素材
+typings/    旧领域契约（迁移期间保留作数据参考）
+data/       身体部位与固定合规文案
+utils/      旧端数据工具（迁移期间保留作回滚参考）
+admin/      旧后台静态实现（仅作回滚参考，不是运行入口）
+scripts/    接口测试与合规检查
+server/     旧 Node.js 服务（仅作回滚参考，不是运行入口）
+database/   SQLite 结构
+docs/       当前产品与内容制作标准
+```
+
+## 本地检查
 
 ```bash
 node scripts/check-content.js
+node scripts/test-search-relations.js
+npm run check
+npm run build
+
+# 开发模式（默认 http://127.0.0.1:4173）
+npm run dev
+
+# 生产模式：先 build，再启动 standalone 服务
+npm run build
+npm start
 ```
-
-扫描 `data / pages / components` 下所有 `.ts / .vue` 文案，命中禁用词（感冒/发烧/胃炎/治疗/下药/根治/患者等）即报错退出。建议提交代码前跑一次。
-
-## 后续路线（待 PRD 确认）
-
-- [ ] AI 搜索（规则版已上线；LLM 兜底待接 uniCloud + 混元，方案见 `docs/features/ai-search.md`）
-- [ ] 微信云开发 / uniCloud 迁移（档案/打卡跨设备存活）
-- [ ] 真实音视频素材接入（player 素材接口）
-- [ ] tabBar 图标与品牌视觉深化
-- [ ] 打卡提醒（订阅消息）
-- [ ] 方案库扩充与内容运营后台
-

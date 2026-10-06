@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>小青囊内容后台</title>
+  <meta name="description" content="小青囊信息文章与小功法内容管理">
+  <link rel="stylesheet" href="./styles.css">
+  <style>.word-import{display:inline-flex;align-items:center;justify-content:center;cursor:pointer;white-space:nowrap}.word-import input{display:none}</style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark">青</div><div><strong>小青囊</strong><span>内容后台</span></div></div>
+    <nav>
+      <details class="nav-section" open>
+        <summary>基础数据库 <span>⌄</span></summary>
+      <div class="database-nav">
+        <button class="nav-item active" data-admin-view="methods"><span>法</span>方法库<b id="count-methods">0</b></button>
+        <button class="nav-item" data-admin-view="problems"><span>问</span>问题库<b id="count-problems">0</b></button>
+        <button class="nav-item" data-admin-view="points"><span>穴</span>穴位库<b id="count-points">0</b></button>
+      </div>
+      </details>
+      <details class="nav-section nav-section-anthology" open>
+        <summary id="anthology-entry"><span>文</span>青囊文集<b id="count-articles">0</b><i>⌄</i></summary>
+      <div class="anthology-nav" id="anthology-nav" aria-label="青囊文集管理" hidden>
+        <button data-admin-view="articles">文章管理</button>
+        <button data-admin-view="columns">专栏设计 <b id="count-columns">0</b></button>
+        <button data-admin-view="candidates">来源同步</button>
+      </div>
+      </details>
+      <details class="nav-section tool-section">
+        <summary>系统工具 <span>⌄</span></summary>
+        <div class="tool-nav"><button id="export-data" type="button">导出备份</button><button id="show-logs" type="button">操作记录</button></div>
+      </details>
+    </nav>
+  </aside>
+
+  <div class="workspace">
+    <header class="topbar">
+      <div class="breadcrumb" id="breadcrumb">基础数据库 <span>/</span> 方法库</div>
+      <span class="admin-user" id="admin-user"></span>
+      <button class="secondary" id="logout-admin">退出</button>
+    </header>
+    <main class="main" id="contents-main">
+      <div class="page-heading"><div><h1 id="content-page-title">方法库</h1><p id="content-page-copy">每个方法只制作一次，再关联问题与穴位。</p></div><div class="heading-actions"><label class="search" id="content-search"><span>⌕</span><input id="search-input" placeholder="搜索标题或关键词"></label><select id="article-review-filter" class="article-review-filter" aria-label="文章审核筛选" hidden><option value="all">全部文章</option><option value="commercial">商业复核</option><option value="published">已发布</option><option value="draft">待处理草稿</option></select><button class="primary" id="create-content">＋ 新建方法</button><label class="primary word-import" id="word-import" hidden>⇧ 上传 Word<input id="word-import-input" type="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"></label></div></div>
+      <section class="content-panel">
+        <div class="list-heading"><strong id="list-title">养护方法</strong><span id="list-summary">0 条</span></div>
+        <div class="content-list" id="content-list"></div>
+      </section>
+    </main>
+
+
+    <main class="main" id="columns-main" hidden>
+      <div class="page-heading"><div><h1>专栏设计</h1><p>名称、介绍、颜色、顺序和显示状态会直接作用于前台文集。</p></div><button class="primary" id="create-column">＋ 新建专栏</button></div>
+      <section class="content-panel"><div class="list-heading"><strong>全部专栏</strong><span id="column-list-summary">0 个</span></div><div class="column-admin-list" id="column-admin-list"></div></section>
+    </main>
+    <main class="main" id="candidates-main" hidden>
+      <div class="page-heading"><div><h1>来源同步</h1><p>从自病自医扫描目录、筛选候选并抓取正文；导入后统一到文章管理中编辑和发布。</p></div><div class="heading-actions"><span class="candidate-selection" id="candidate-selection-count">已选 0 篇</span><button class="secondary" id="scan-zibingziyi" type="button">扫描候选</button><button class="secondary" id="sync-zibingziyi" type="button">同步自病自医</button><button class="primary" id="import-selected-candidates" type="button">抓取已选正文</button></div></div>
+      <div class="source-status" id="article-source-status">自病自医：尚未同步</div>
+      <section class="candidate-toolbar"><label class="search"><span>⌕</span><input id="candidate-search" placeholder="搜索标题或摘要"></label><select id="candidate-type"><option value="">全部建议类型</option><option value="article">信息文集</option><option value="problem">可能是问题</option><option value="skill">可能是方法</option></select><select id="candidate-status"><option value="">全部状态</option><option value="candidate">待筛选</option><option value="selected">已选中</option><option value="imported">已导入</option><option value="ignored">已忽略</option></select></section>
+      <section class="content-panel"><div class="list-heading"><strong>自病自医待审核内容</strong><span id="candidate-list-summary">0 条</span></div><div class="candidate-list" id="candidate-list"></div></section>
+    </main>
+    <main class="main" id="problems-main" hidden>
+      <div class="page-heading"><div><h1>问题库</h1><p>以问题为中心管理多个方法；同一条关联也会同步出现在方法库。</p></div></div>
+      <section class="content-panel"><div class="list-heading"><strong>全部问题</strong><span id="problem-list-summary">0 条</span></div><div class="content-list" id="problem-list"></div></section>
+    </main>
+    <main class="main" id="points-main" hidden>
+      <div class="page-heading"><div><h1>穴位库</h1><p>标准定位和取穴图只制作一次，任何方法都可调用。</p></div></div>
+      <section class="content-panel"><div class="list-heading"><strong>全部穴位</strong><span id="point-list-summary">0 条</span></div><div class="content-list" id="point-list"></div></section>
+    </main>
+  </div>
+
+  <div class="auth-layer" id="auth-layer">
+    <section class="auth-card">
+      <div class="brand-mark">青</div>
+      <span id="auth-eyebrow">后台登录</span>
+      <h1 id="auth-title">登录小青囊</h1>
+      <p id="auth-copy">内容只允许管理员查看和发布。</p>
+      <form id="auth-form">
+        <label class="field"><span>用户名</span><input name="username" autocomplete="username" required></label>
+        <label class="field"><span>密码</span><input name="password" type="password" autocomplete="current-password" minlength="8" required></label>
+        <label class="field" id="confirm-field" hidden><span>再次输入密码</span><input name="confirmPassword" type="password" minlength="8"></label>
+        <button class="primary auth-submit" type="submit" id="auth-submit">登录</button>
+      </form>
+      <div class="auth-error" id="auth-error"></div>
+    </section>
+  </div>
+
+  <div class="editor-layer" id="editor-layer" hidden>
+    <section class="editor">
+      <header class="editor-header">
+        <div><span id="editor-kind">小青囊内容</span><h2 id="editor-title">新建内容</h2></div>
+        <div class="completion"><strong id="completion-number">0%</strong><span>已填写</span></div>
+        <button class="close-editor" id="close-editor">×</button>
+      </header>
+
+      <form id="content-form">
+        <div class="editor-body">
+          <section class="form-section" id="content-type-section">
+            <div class="section-heading"><i>1</i><div><h3>内容类型</h3><p>文集负责阅读，养护方法负责安全尝试。</p></div></div>
+            <div class="content-type-picker">
+              <button type="button" class="content-type-option active" data-content-type="skill"><strong>方法资料</strong><span>用户可以根据图文进行操作</span></button>
+              <button type="button" class="content-type-option" data-content-type="article"><strong>文集文章</strong><span>用于专栏、专题与安静阅读</span></button>
+            </div>
+            <div class="fields">
+              <label class="field wide"><span>标题 <b>*</b></span><input name="title" placeholder="文章标题或方法名称"></label>
+              <label class="field wide"><span>摘要 <small>选填</small></span><textarea name="summary" rows="3" placeholder="用一句话说明这篇内容"></textarea></label>
+              <label class="field"><span>搜索关键词 <small>选填</small></span><input name="keywords" placeholder="可选：多个词用逗号分隔"></label>
+              <div class="field wide body-area-field" data-method-only><span>关联身体位置 <b>*</b></span><div class="body-area-picker"><input id="body-area-search" placeholder="搜索并选择标准位置"><div id="body-area-selected" class="body-area-selected"></div><div id="body-area-options" class="body-area-options"></div></div></div>
+            </div>
+            <div class="fields" data-article-only hidden>
+              <label class="field"><span>所属专栏</span><select name="columnId" id="article-column"><option value="">未归入专栏</option></select></label>
+              <label class="field"><span>专栏编号</span><input name="issueNumber" type="number" min="1" placeholder="例如：265"></label>
+              <label class="field wide"><span>阅读主题</span><input name="topics" placeholder="多个主题用逗号分隔，例如：经络，穴位，医案"></label>
+              <label class="field wide"><span>封面图片地址</span><input name="coverImage" placeholder="选填，为专刊和首页推荐预留"></label>
+              <label class="field wide"><span>编者导读</span><textarea name="editorNote" rows="3" placeholder="选填，为专刊与精选阅读预留"></textarea></label>
+            </div>
+          </section>
+
+          <section class="form-section">
+            <div class="section-heading"><i>2</i><div><h3 id="content-section-title">方法</h3><p id="content-section-copy">直接编辑用户最终看到的图文内容，暂不拆分操作步骤。</p></div></div>
+            <div class="fields compact" data-method-only>
+              <label class="field"><span>方法名称 <b>*</b></span><input name="methodName" placeholder="例如：搓八髎"></label>
+              <label class="field"><span>方法类型 <b>*</b></span><select name="methodType"><option value="acupoint">穴位</option><option value="exercise">功法</option><option value="external">其他外用方法</option></select></label>
+              <label class="field"><span>动作类型</span><select name="actionType"><option value="">请选择</option><option>按压</option><option>按揉</option><option>拍打</option><option>艾灸</option><option>热敷</option><option>其他</option></select></label>
+              <label class="field"><span>所需工具或材料 <b>*</b></span><input name="materials" placeholder="没有工具时填写“无”"></label>
+              <label class="field"><span>力度、次数与时长</span><input name="actionParameters" placeholder="例如：以舒适酸胀为度，每次 3 分钟"></label>
+              <label class="field"><span>适合人群</span><input name="audience" placeholder="例如：久坐后腰部紧张的成年人"></label>
+              <label class="field"><span>适合时机</span><input name="timing" placeholder="例如：白天或睡前，感觉不适时"></label>
+            </div>
+            <div class="rich-field">
+              <div class="rich-label"><strong id="rich-content-label">方法图文 <b>*</b></strong><span>可直接粘贴文字，并插入图片或视频</span></div>
+              <div class="rich-toolbar" id="method-toolbar">
+                <button type="button" data-command="bold"><b>B</b></button>
+                <button type="button" data-command="formatBlock" data-value="h3">小标题</button>
+                <button type="button" data-command="insertUnorderedList">项目符号</button>
+                <button type="button" data-command="insertOrderedList">编号</button>
+                <button type="button" data-command="formatBlock" data-value="blockquote">引用</button>
+                <button type="button" data-command="removeFormat">清除格式</button>
+                <label class="rich-upload">＋ 图片 / GIF / 视频<input id="method-media-upload" type="file" accept="image/*,video/*" multiple></label>
+              </div>
+              <div class="rich-editor" id="method-content" contenteditable="true" data-placeholder="在这里写清楚用户最终看到的内容。图片、GIF 或视频可以按阅读顺序插入……"></div>
+            </div>
+          </section>
+
+          <section class="form-section" data-method-only>
+            <div class="section-heading"><i>3</i><div><h3>适用情况</h3><p>说明适合什么情况、什么人群、什么时候使用。</p></div></div>
+            <div class="fields"><label class="field wide"><span>使用范围与适用情况 <b>*</b></span><textarea name="usageScope" rows="4" placeholder="这个方法适合什么日常不适；每行一项"></textarea></label></div>
+          </section>
+
+          <section class="form-section" data-method-only>
+            <div class="section-heading"><i>联</i><div><h3>关联资料</h3><p>调用已制作的问题和穴位，不重复粘贴定位内容。</p></div></div>
+            <div class="relation-block">
+              <div class="relation-heading"><strong>关联问题</strong><span>每条关联都要标注依据类型</span></div>
+              <div class="catalog-picker" id="problem-picker"></div>
+              <div class="relation-selected" id="selected-problems"></div>
+            </div>
+            <div class="relation-block">
+              <div class="relation-heading"><strong>调用穴位</strong><span>定位来自穴位库，这里只写本方法如何使用</span></div>
+              <div class="catalog-picker" id="point-picker"></div>
+              <div class="relation-selected" id="selected-points"></div>
+            </div>
+          </section>
+
+          <section class="form-section" data-method-only>
+            <div class="section-heading"><i>4</i><div><h3>注意事项</h3><p>填写开始前、操作中需要留意的事项。</p></div></div>
+            <div class="fields"><label class="field wide"><span>注意事项</span><textarea name="notices" rows="5" placeholder="每行一项；没有经核验的内容可以留空"></textarea></label></div>
+          </section>
+
+          <section class="form-section">
+            <div class="section-heading"><i>5</i><div><h3 id="boundary-title">风险边界</h3><p id="boundary-copy">明确不适用情况和必须停止的信号。</p></div></div>
+            <div class="fields">
+              <label class="field wide danger-field"><span id="boundary-label">不适用情况 <b>*</b></span><textarea name="outsideScope" rows="4" placeholder="每行一项"></textarea></label>
+              <label class="field wide danger-field" data-method-only><span>必须停止的情况 <b>*</b></span><textarea name="helpConditions" rows="4" placeholder="每行一项"></textarea></label>
+            </div>
+          </section>
+
+          <section class="form-section" data-method-only>
+            <div class="section-heading"><i>6</i><div><h3>案例集</h3><p>选填。以下均为个体经验，仅供参考，不代表普遍效果。</p></div></div>
+            <div class="rich-field">
+              <div class="rich-label"><strong>案例图文</strong><span>可用小标题分隔多个案例；不要写成效果承诺</span></div>
+              <div class="rich-toolbar" id="case-toolbar">
+                <button type="button" data-command="bold"><b>B</b></button>
+                <button type="button" data-command="formatBlock" data-value="h3">小标题</button>
+                <button type="button" data-command="insertUnorderedList">项目符号</button>
+                <button type="button" data-command="insertOrderedList">编号</button>
+                <button type="button" data-command="formatBlock" data-value="blockquote">引用</button>
+                <button type="button" data-command="removeFormat">清除格式</button>
+                <label class="rich-upload">＋ 图片 / GIF / 视频<input id="case-media-upload" type="file" accept="image/*,video/*" multiple></label>
+              </div>
+              <div class="rich-editor" id="case-content" contenteditable="true" data-placeholder="例如：案例一｜使用前的日常情况、实际使用方法、主观记录和个体差异……"></div>
+            </div>
+          </section>
+
+          <section class="form-section">
+            <div class="section-heading"><i>源</i><div><h3>资料来源</h3><p>用于审核与追溯；前台会在当前页底部弹出展示。</p></div></div>
+            <div class="fields">
+              <label class="field wide"><span>原始资料标题 <b>*</b></span><input name="sourceTitle" placeholder="填写文章、书籍或资料原名"></label>
+              <label class="field"><span>作者或讲述者</span><input name="sourceAuthor" placeholder="不知道可以留空"></label>
+              <label class="field"><span>平台或出版社</span><input name="sourcePlatform" placeholder="例如：公众号名称"></label>
+              <label class="field wide"><span>原始链接</span><input name="sourceUrl" type="url" placeholder="https://"></label>
+              <label class="field wide"><span>原文或依据 <b>*</b></span><textarea name="sourceText" rows="8" placeholder="粘贴与本条内容直接相关的原文"></textarea></label>
+              <label class="field wide"><span>核验备注</span><textarea name="sourceNotes" rows="3" placeholder="记录待确认的信息、版权范围或修改原因"></textarea></label>
+            </div>
+          </section>
+
+          <section class="form-section check-section">
+            <div class="section-heading"><i>✓</i><div><h3>保存前检查</h3><p>系统只提示缺项，不会替你补写。</p></div></div>
+            <div class="check-list" id="check-list"></div>
+          </section>
+        </div>
+
+        <footer class="editor-footer">
+          <span id="save-hint">内容保存在本机数据库，发布后才会进入前台</span>
+          <button type="button" class="secondary danger-action" id="withdraw-content" hidden>撤回发布</button>
+          <button type="button" class="secondary danger-action" id="archive-content" hidden>删除资料</button>
+          <button type="button" class="secondary" id="cancel-edit">取消</button>
+          <button type="button" class="secondary" id="check-content">检查缺项</button>
+          <button type="button" class="secondary" id="preview-content">前台预览</button>
+          <button type="submit" class="primary">保存草稿</button>
+          <button type="button" class="primary publish" id="publish-content">保存并发布</button>
+        </footer>
+      </form>
+    </section>
+  </div>
+
+  <div class="editor-layer" id="catalog-editor-layer" hidden>
+    <section class="editor">
+      <header class="editor-header"><div><span id="catalog-editor-kind">可复用资料</span><h2 id="catalog-editor-title">新建</h2></div><button class="close-editor" id="close-catalog-editor">×</button></header>
+      <form id="problem-form" class="catalog-form" hidden>
+        <div class="editor-body"><section class="form-section">
+          <div class="section-heading"><i>问</i><div><h3>问题资料</h3><p>定义一个问题，然后选择它可对应的一个或多个方法。</p></div></div>
+          <div class="fields">
+            <label class="field wide"><span>标准问题名称 <b>*</b></span><input name="name" placeholder="例如：腰部不适"></label>
+            <label class="field wide"><span>用户可能的说法</span><textarea name="aliases" rows="3" placeholder="例如：腰酸、久坐后腰紧；每行一项"></textarea></label>
+            <label class="field wide"><span>问题说明</span><textarea name="description" rows="4" placeholder="只说明收录范围，不作诊断"></textarea></label>
+            <div class="field wide"><span>关联身体位置 <b>*</b></span><div class="simple-area-picker" id="problem-area-picker"></div></div>
+            <label class="field"><span>是否需要追问</span><textarea name="needAsk" rows="3" placeholder="例如：是否突然发生、是否伴随胸闷"></textarea></label>
+            <label class="field"><span>危险提示</span><textarea name="dangerNotice" rows="3" placeholder="出现哪些情况不能继续推荐普通方法"></textarea></label>
+            <label class="field wide"><span>内部审核备注</span><textarea name="notes" rows="3"></textarea></label>
+          </div>
+          <div class="relation-block problem-method-block">
+            <div class="relation-heading"><strong>这个问题可以关联哪些方法</strong><span>可多选，只建立关联，不复制方法内容</span></div>
+            <div class="catalog-picker" id="problem-method-picker"></div>
+            <div class="relation-selected" id="problem-selected-methods"></div>
+          </div>
+        </section></div>
+        <footer class="editor-footer"><span>从问题库或方法库修改关联，另一端会自动同步</span><button type="button" class="secondary" id="save-problem-draft">保存草稿</button><button type="submit" class="primary">保存并审核</button></footer>
+      </form>
+      <form id="point-form" class="catalog-form" hidden>
+        <div class="editor-body"><section class="form-section">
+          <div class="section-heading"><i>穴</i><div><h3>穴位定位资料</h3><p>只维护“在哪里、怎么找”，动作参数属于方法。</p></div></div>
+          <div class="fields">
+            <label class="field"><span>标准名称 <b>*</b></span><input name="name"></label>
+            <label class="field"><span>别名</span><input name="aliases" placeholder="多个用逗号分隔"></label>
+            <label class="field"><span>所属身体位置 <b>*</b></span><select name="bodyAreaId" id="point-body-area"></select></label>
+            <label class="field wide"><span>专业定位 <b>*</b></span><textarea name="professionalLocation" rows="4"></textarea></label>
+            <label class="field wide"><span>普通人取穴方法 <b>*</b></span><textarea name="everydayLocation" rows="4"></textarea></label>
+            <label class="field wide"><span>容易找错的位置</span><textarea name="commonMistakes" rows="3"></textarea></label>
+            <label class="field wide"><span>定位注意事项</span><textarea name="notices" rows="3"></textarea></label>
+          </div>
+          <div class="rich-field"><div class="rich-label"><strong>定位图文 <b>*</b></strong><span>用于之后所有方法复用</span></div><div class="rich-toolbar" id="point-toolbar"><button type="button" data-command="bold"><b>B</b></button><button type="button" data-command="formatBlock" data-value="h3">小标题</button><button type="button" data-command="insertUnorderedList">项目符号</button><button type="button" data-command="removeFormat">清除格式</button><label class="rich-upload">＋ 图片 / GIF / 视频<input id="point-media-upload" type="file" accept="image/*,video/*" multiple></label></div><div class="rich-editor compact-rich" id="point-content" contenteditable="true" data-placeholder="放入定位图、经验取穴图和必要说明……"></div></div>
+        </section><section class="form-section"><div class="section-heading"><i>源</i><div><h3>定位依据</h3><p>专业定位必须可追溯。</p></div></div><div class="fields">
+          <label class="field wide"><span>资料标题 <b>*</b></span><input name="sourceTitle"></label>
+          <label class="field wide"><span>原文或依据 <b>*</b></span><textarea name="sourceText" rows="6"></textarea></label>
+          <label class="field wide"><span>核验备注</span><textarea name="sourceNotes" rows="3"></textarea></label>
+        </div></section></div>
+        <footer class="editor-footer"><span>穴位审核后才可支持方法发布</span><button type="button" class="secondary" id="save-point-draft">保存草稿</button><button type="submit" class="primary">保存并审核</button></footer>
+      </form>
+    </section>
+  </div>
+
+  <div class="logs-layer" id="logs-layer" hidden>
+    <section class="logs-card">
+      <header><div><span>审计记录</span><h2>后台操作记录</h2></div><button id="close-logs">×</button></header>
+      <div class="logs-list" id="logs-list"></div>
+    </section>
+  </div>
+  <div class="logs-layer" id="column-editor-layer" hidden><section class="auth-card column-editor"><span>专栏设置</span><h1 id="column-editor-title">新建专栏</h1><form id="column-form"><label class="field"><span>专栏名称</span><input name="name" required></label><label class="field"><span>一句介绍</span><textarea name="description" rows="3"></textarea></label><label class="field"><span>卡片颜色</span><input name="color" type="color" value="#DCEEDB"></label><label class="field"><span>显示顺序</span><input name="sort_order" type="number" value="0"></label><label class="field"><span>前台状态</span><select name="status"><option value="visible">显示</option><option value="hidden">隐藏</option></select></label><div class="column-actions"><button type="button" class="secondary danger-action" id="delete-column" hidden>删除专栏</button><button type="button" class="secondary" id="cancel-column">取消</button><button class="primary" type="submit">保存专栏</button></div></form></section></div>
+
+  <div class="preview-layer" id="preview-layer" hidden>
+    <section class="preview-shell">
+      <header><div><span>前台预览</span><strong id="preview-title">未命名资料</strong></div><button id="close-preview">×</button></header>
+      <div class="preview-phone"><div id="preview-body"></div></div>
+      <p>预览只展示当前表单内容，不会发布到用户端。</p>
+    </section>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+  <script src="./catalogs.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

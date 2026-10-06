@@ -1,0 +1,4 @@
+import { NextResponse } from 'next/server'
+import { closeDb, currentSession, all, openDb } from '@/src/lib/db'
+export const runtime='nodejs'
+export async function GET(request:Request){const db=openDb();try{const session=currentSession(db,request);const count=Number((db.prepare('SELECT COUNT(*) AS count FROM admin_users').get() as any).count||0);return NextResponse.json({needsSetup:count===0,authenticated:Boolean(session),user:session?{username:session.username,accountType:session.account_type,csrfToken:session.csrf_token}:null,permissions:session?.account_type==='super_admin'?all(db,'SELECT code,label,permission_group AS permissionGroup FROM admin_permission_catalog ORDER BY sort_order'):session?all(db,'SELECT permission_code AS code FROM admin_user_permissions WHERE user_id=? AND enabled=1',[session.user_id]):[]})}finally{closeDb(db)}}

@@ -1,37 +1,39 @@
 import { AreaItem } from '../typings/models'
 
-/**
- * 人体图细分部位（与 body-figure 组件热区的 areaId 一一对应）
- * v2 拆分：原 5 大分区拆为 7 个细分部位（头/颈 分开，新增 腰）
- * aliases 供 AI 搜索意图识别（注意去医疗化表述，过禁用词扫描）
- */
+/** 人体图身体表面分区。每个 id 与点击区域一一对应。 */
 export const AREAS: AreaItem[] = [
-  {
-    id: 'head', name: '头', hint: '发紧、昏沉', subtitle: '头脑发紧昏沉，给它松松绑',
-    aliases: ['头', '头疼', '头晕', '头昏', '昏沉', '脑子发胀', '太阳穴']
-  },
-  {
-    id: 'neck', name: '颈', hint: '发僵、发紧', subtitle: '这里紧绷，多半是它在抗议久坐',
-    aliases: ['脖子', '颈', '颈椎', '落枕', '脖子僵', '脖子酸', '脖子疼']
-  },
-  {
-    id: 'shoulder', name: '肩背', hint: '紧绷、酸胀', subtitle: '扛了一天，肩膀也想放下来',
-    aliases: ['肩膀', '肩', '肩颈', '肩背', '背', '后背', '肩胛', '上臂']
-  },
-  {
-    id: 'waist', name: '腰', hint: '酸乏、发紧', subtitle: '久坐后的腰，需要被好好安放',
-    aliases: ['腰', '后腰', '腰背', '腰酸', '腰僵']
-  },
-  {
-    id: 'belly', name: '腹', hint: '发胀、发凉', subtitle: '肚子发胀发凉，暖一暖就安稳',
-    aliases: ['肚子', '腹', '小腹', '肚脐', '腹胀', '肚子凉', '吃凉的']
-  },
-  {
-    id: 'limbs', name: '手足', hint: '发冷、乏力', subtitle: '手脚发冷乏力，从指尖暖回来',
-    aliases: ['手', '脚', '腿', '胳膊', '四肢', '手指', '手腕', '手脚', '手脚冰凉']
-  },
-  {
-    id: 'whole', name: '全身', hint: '沉重、困乏', subtitle: '说不清哪里累，就整个人都歇一歇',
-    aliases: ['全身', '整个人', '浑身', '累', '疲惫', '没精神']
-  }
+  { id: 'head', name: '头面部', hint: '头部与面部', subtitle: '查看头面部的日常放松内容', aliases: ['头', '头面', '面部'] },
+  { id: 'eye', name: '眼周', hint: '双眼周围', subtitle: '查看眼周的日常放松内容', aliases: ['眼', '眼睛', '眼周'] },
+  { id: 'ear', name: '耳部', hint: '左右耳部', subtitle: '查看耳部的日常养护内容', aliases: ['耳', '耳朵', '耳周'] },
+  { id: 'nose', name: '鼻部', hint: '鼻部周围', subtitle: '查看鼻部的日常养护内容', aliases: ['鼻', '鼻子', '鼻周'] },
+  { id: 'mouth', name: '口唇周围', hint: '嘴部与口唇周围', subtitle: '查看口唇周围的日常养护内容', aliases: ['嘴', '嘴唇', '口唇', '口周'] },
+  { id: 'cheek', name: '面颊', hint: '左右面颊', subtitle: '查看面颊的日常放松内容', aliases: ['脸颊', '面颊', '脸'] },
+  { id: 'forehead', name: '额部', hint: '前额区域', subtitle: '查看额部的日常放松内容', aliases: ['额头', '前额', '额部'] },
+  { id: 'temple', name: '颞部', hint: '左右太阳穴周围', subtitle: '查看颞部的日常放松内容', aliases: ['太阳穴', '颞部'] },
+  { id: 'jaw', name: '下颌部', hint: '下巴与下颌周围', subtitle: '查看下颌部的日常放松内容', aliases: ['下巴', '下颌', '下颌部'] },
+  { id: 'occiput', name: '头后部', hint: '后脑区域', subtitle: '查看头后部的日常放松内容', aliases: ['后脑', '后脑勺', '头后部'] },
+  { id: 'breast', name: '乳房', hint: '乳房区域', subtitle: '查看乳房区域的日常养护内容', aliases: ['乳房', '乳腺区域'] },
+  { id: 'nipple-areola', name: '乳头及乳晕', hint: '乳头及乳晕区域', subtitle: '查看乳头及乳晕区域的日常养护内容', aliases: ['乳头', '乳晕'] },
+  { id: 'vulva', name: '外阴', hint: '女性外部结构', subtitle: '查看外阴区域的日常养护内容', aliases: ['外阴'] },
+  { id: 'penis', name: '阴茎', hint: '男性外部结构', subtitle: '查看阴茎区域的日常养护内容', aliases: ['阴茎'] },
+  { id: 'scrotum', name: '阴囊', hint: '男性外部结构', subtitle: '查看阴囊区域的日常养护内容', aliases: ['阴囊'] },
+  { id: 'perineum', name: '会阴', hint: '会阴区域', subtitle: '查看会阴区域的日常养护内容', aliases: ['会阴'] },
+  { id: 'anus', name: '肛门及肛周', hint: '肛门及周围区域', subtitle: '查看肛门及肛周的日常养护内容', aliases: ['肛门', '肛周'] },
+  { id: 'neck', name: '颈部', hint: '前颈与后颈', subtitle: '查看颈部的日常放松内容', aliases: ['颈', '脖子', '后颈'] },
+  { id: 'shoulder', name: '肩部', hint: '左右肩部', subtitle: '查看肩部的日常放松内容', aliases: ['肩', '肩膀', '肩头'] },
+  { id: 'chest', name: '胸部', hint: '胸前区域', subtitle: '查看胸部的日常养护内容', aliases: ['胸', '胸前'] },
+  { id: 'upper-back', name: '上背部', hint: '肩胛与上背', subtitle: '查看上背部的日常放松内容', aliases: ['上背', '肩胛', '背上部'] },
+  { id: 'abdomen', name: '腹部', hint: '上腹与脐周', subtitle: '查看腹部的日常养护内容', aliases: ['腹', '肚子', '肚脐', '脐周'] },
+  { id: 'lower-back', name: '下背部', hint: '腰部与下背', subtitle: '查看下背部的日常放松内容', aliases: ['腰', '后腰', '下背', '腰背'] },
+  { id: 'pelvis', name: '下腹与腹股沟', hint: '下腹及腹股沟区域', subtitle: '查看下腹与腹股沟区域的日常养护内容', aliases: ['下腹', '小腹', '腹股沟'] },
+  { id: 'buttocks', name: '臀部', hint: '左右臀部', subtitle: '查看臀部的日常放松内容', aliases: ['臀', '臀部', '屁股'] },
+  { id: 'upper-arm', name: '上臂', hint: '肩与肘之间', subtitle: '查看上臂的日常放松内容', aliases: ['上臂', '大臂'] },
+  { id: 'elbow', name: '肘部', hint: '肘关节周围', subtitle: '查看肘部的日常放松内容', aliases: ['肘', '胳膊肘'] },
+  { id: 'forearm', name: '前臂', hint: '肘与腕之间', subtitle: '查看前臂的日常放松内容', aliases: ['前臂', '小臂'] },
+  { id: 'hand', name: '手部', hint: '手腕、手掌与手指', subtitle: '查看手部的日常放松内容', aliases: ['手', '手腕', '手掌', '手指'] },
+  { id: 'thigh', name: '大腿', hint: '髋与膝之间', subtitle: '查看大腿的日常放松内容', aliases: ['大腿', '腿上部'] },
+  { id: 'knee', name: '膝部', hint: '膝关节周围', subtitle: '查看膝部的日常放松内容', aliases: ['膝', '膝盖'] },
+  { id: 'lower-leg', name: '小腿', hint: '膝与踝之间', subtitle: '查看小腿的日常放松内容', aliases: ['小腿', '腿肚'] },
+  { id: 'foot', name: '足部', hint: '脚踝与足部', subtitle: '查看足部的日常放松内容', aliases: ['足', '脚', '脚踝', '脚掌'] },
+  { id: 'whole', name: '全身', hint: '全身', subtitle: '查看全身日常放松内容', aliases: ['全身', '整个人', '浑身', '放松'] }
 ]

@@ -1,0 +1,24 @@
+{
+    "name" : "小青囊",
+    "appid" : "__UNI__1E6ADDF",
+    "description" : "中式日常养护方法，一步一步跟着做",
+    "versionName" : "1.0.0",
+    "versionCode" : "1000",
+    "transformPx" : false,
+    "uniStatistics" : {
+        "enable" : false
+    },
+    "vueVersion" : "3",
+    "h5" : {
+        "title" : "小青囊",
+        "router" : {
+            "mode" : "hash",
+            "base" : "/"
+        },
+        "optimization" : {
+            "treeShaking" : {
+                "enable" : true
+            }
+        }
+    }
+}

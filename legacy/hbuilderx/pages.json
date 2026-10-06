@@ -1,0 +1,31 @@
+{
+  "easycom": { "autoscan": true },
+  "pages": [
+    {
+      "path": "pages/index/index",
+      "style": { "navigationBarTitleText": "小青囊" }
+    },
+    {
+      "path": "pages/chat/chat",
+      "style": { "navigationBarTitleText": "小青囊 · 对话", "navigationStyle": "custom" }
+    },
+    {
+      "path": "pages/problem/detail",
+      "style": { "navigationBarTitleText": "小青囊" }
+    },
+    {
+      "path": "pages/gear/gear",
+      "style": { "navigationBarTitleText": "青囊文集" }
+    },
+    {
+      "path": "pages/account/account",
+      "style": { "navigationBarTitleText": "我的" }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarBackgroundColor": "#FFFFFF",
+    "navigationBarTitleText": "小青囊",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#F4F6F5"
+  }
+}

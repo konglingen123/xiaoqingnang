@@ -1,5 +1,12 @@
 node_modules/
+.next/
+tsconfig.tsbuildinfo
 unpackage/
+.runtime/
 .hbuilderx/
 .DS_Store
 *.log
+__pycache__/
+*.pyc
+
+outputs/

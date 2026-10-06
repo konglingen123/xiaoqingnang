@@ -1,0 +1,5 @@
+import crypto from 'node:crypto'
+import { NextResponse } from 'next/server'
+import { closeDb, hashPassword, issueSession, now, openDb, run, audit, SESSION_COOKIE, SESSION_SECONDS } from '@/src/lib/db'
+export const runtime='nodejs'
+export async function POST(request:Request){const body=await request.json().catch(()=>({}));const username=String(body.username||'').trim();const password=String(body.password||'');const db=openDb();try{const user:any=db.prepare('SELECT * FROM admin_users WHERE username=?').get(username);if(!user||user.password_hash!==hashPassword(password,user.password_salt))return NextResponse.json({error:'用户名或密码不正确'},{status:401});const issued=issueSession(db,user.id);run(db,'UPDATE admin_users SET last_login_at=? WHERE id=?',[now(),user.id]);audit(db,user.id,'login','admin_user',user.id);const response=NextResponse.json({ok:true,username,csrfToken:issued.csrf});response.cookies.set(SESSION_COOKIE,issued.token,{httpOnly:true,sameSite:'strict',path:'/',maxAge:SESSION_SECONDS,secure:process.env.NODE_ENV==='production'});return response}finally{closeDb(db)}}

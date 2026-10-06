@@ -1,0 +1,4 @@
+import { NextResponse } from 'next/server'
+export const runtime='nodejs'
+const allowed=new Set(['zengshiwuyu.cn','zibingziyi.zengshiwuyu.cn'])
+export async function GET(request:Request){const target=new URL(request.url).searchParams.get('url')||'';let parsed:URL;try{parsed=new URL(target)}catch{return NextResponse.json({error:'不支持的图片地址'},{status:400})}if(parsed.protocol!=='https:'||!allowed.has(parsed.hostname))return NextResponse.json({error:'不支持的图片地址'},{status:400});try{const response=await fetch(parsed);if(!response.ok)return NextResponse.json({error:'原图暂时无法读取'},{status:502});const type=response.headers.get('content-type')||'image/jpeg';if(!type.startsWith('image/'))return NextResponse.json({error:'原地址不是图片'},{status:415});return new NextResponse(await response.arrayBuffer(),{headers:{'Content-Type':type,'Cache-Control':'public, max-age=86400'}})}catch{return NextResponse.json({error:'原图暂时无法读取'},{status:502})}}

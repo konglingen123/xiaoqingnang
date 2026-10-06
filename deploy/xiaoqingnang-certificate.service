@@ -1,0 +1,10 @@
+[Unit]
+Description=Renew XiaoQingNang TLS certificate
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/acme-xqn/acme.sh --cron --home /var/lib/acme-xqn
+PrivateTmp=true
+NoNewPrivileges=true
+ProtectHome=true

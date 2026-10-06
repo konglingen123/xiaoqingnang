@@ -1,0 +1,12 @@
+[Unit]
+Description=Backup XiaoQingNang database and media
+After=xiaoqingnang.service
+
+[Service]
+Type=oneshot
+User=xiaoqingnang
+Group=xiaoqingnang
+ExecStart=/opt/xiaoqingnang/scripts/backup-xiaoqingnang.sh
+PrivateTmp=true
+NoNewPrivileges=true
+ProtectHome=true

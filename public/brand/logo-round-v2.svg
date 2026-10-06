@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">小青囊圆形品牌标志</title>
+  <desc id="desc">奶油白圆底、竹青圆环，上方为小字，下方为青囊二字，并以柔桃色小点缀收尾。</desc>
+  <circle cx="256" cy="256" r="236" fill="#FFF9ED"/>
+  <circle cx="256" cy="256" r="222" fill="none" stroke="#397B63" stroke-width="12"/>
+  <g fill="#397B63" text-anchor="middle" font-family="'PingFang SC','Noto Sans CJK SC','Microsoft YaHei',sans-serif" font-weight="700">
+    <text x="256" y="161" font-size="104">小</text>
+    <text x="164" y="351" font-size="176">青</text>
+    <text x="355" y="343" font-size="153">囊</text>
+  </g>
+  <path d="M382 350c18-8 35-4 39 8 4 13-8 25-27 27-18 2-33-5-34-17-1-7 8-14 22-18Z" fill="#F49A86"/>
+</svg>

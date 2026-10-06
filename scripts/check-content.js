@@ -16,10 +16,12 @@ const BANNED_WORDS = [
 ]
 
 const ROOT = path.resolve(__dirname, '..')
-const SCAN_DIRS = ['data', 'pages', 'components']
+const SCAN_DIRS = ['data', 'app', 'src', 'legacy/hbuilderx']
 const SKIP_FILES = new Set([
   // 词表本身的来源文件，跳过（否则词表会误伤自己）
-  path.join(ROOT, 'data', 'compliance.ts')
+  path.join(ROOT, 'data', 'compliance.ts'),
+  path.join(ROOT, 'app', 'api', 'admin', 'import-docx', 'route.ts'),
+  path.join(ROOT, 'src', 'lib', 'db.ts')
 ])
 
 function scanFile(file) {
@@ -48,7 +50,7 @@ function walk(dir) {
 }
 
 global.hits = 0
-SCAN_DIRS.forEach((d) => walk(path.join(ROOT, d)))
+SCAN_DIRS.forEach((d) => { const dir = path.join(ROOT, d); if (fs.existsSync(dir)) walk(dir) })
 
 if (global.hits > 0) {
   console.error(`\n共 ${global.hits} 处违规，请替换为去疾病化表述后重试。`)

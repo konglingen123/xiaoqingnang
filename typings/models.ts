@@ -1,82 +1,135 @@
-/**
- * 小青囊 · 领域模型
- * 所有数据类型集中定义于此，数据层 / 工具层 / 页面层共同引用
- */
+/** 小青囊 H5 公开模型：后台发布一条，前台呈现一条。 */
 
-/** 体质类型（PRD 确认：只做两种，不做"平和"兜底） */
-export type ConstitutionId = 'bingbing' | 'yiran'
-
-/** 体质（去医疗化命名） */
-export interface Constitution {
-  id: ConstitutionId
-  name: string          // 冰冰体质 / 易燃体质
-  motto: string         // 宜温通 / 宜清透
-  desc: string          // 身体说明书文案
-  preferredCategories: string[]  // 千人千面：首页置顶的方案品类
-}
-
-/** 建档问题（3 问，每题选项严格倾向冷/热之一，保证必有结果） */
-export interface OnboardOption {
-  label: string
-  cold: number
-  heat: number
-}
-
-export interface OnboardQuestion {
-  id: string
-  text: string
-  options: OnboardOption[]
-}
-
-/** 人体图部位 */
 export interface AreaItem {
   id: string
   name: string
   hint: string
-  subtitle: string   // 部位方案页副题文案（人话调性）
-  aliases: string[]  // 口语别名（AI 搜索意图识别用）
+  subtitle: string
+  aliases: string[]
 }
 
-/** 安全红绿灯（合规红线 3） */
-export type SafetyLevel = 'green' | 'yellow' | 'red'
+export type PublicContentType = 'article' | 'method'
 
-/** 自愈方案的动作步骤 */
-export interface RemedyStep {
+export interface PublicContentCase {
+  background: string
+  methodUsed: string
+  duration?: string
+  subjectiveRecord: string
+  limitations: string
+  sourceLocator: string
+}
+
+export interface PublicContentSource {
   title: string
-  detail: string
+  author?: string
+  platform?: string
+  url?: string
+  originalText: string
+  notes?: string[]
 }
 
-/** 自愈方案（内容全部数据驱动，禁用词由扫描脚本把关） */
-export interface RemedyPlan {
+export interface PublicPointReference {
   id: string
   name: string
-  motto: string
-  desc: string
-  areas: string[]        // 适用部位
-  aliases: string[]      // 口语别名（AI 搜索匹配的关键，如「落枕」「手脚冰凉」）
-  scenarios: string[]    // 场景词（「久坐」「睡前」，AI 追问偏好过滤用）
-  categories: string[]   // 品类标签（驱动千人千面）
-  safety: SafetyLevel    // 红绿灯
-  contraindications: string[]  // 强制字段：每个方案必须标明禁忌
-  phases: {
-    breathe: string      // 调息阶段引导文案
-    steps: RemedyStep[]  // 动作阶段步骤（90 秒内均匀分配）
-    ending: string       // 收尾阶段引导文案
-  }
+  aliases: string[]
+  bodyAreaId: string
+  professionalLocation: string
+  everydayLocation: string
+  contentHtml: string
+  commonMistakes?: string
+  notices?: string
 }
 
-/** 用户档案 */
-export interface UserProfile {
-  constitutionId: ConstitutionId
-  createdAt: string      // YYYY-MM-DD
-  answers: number[]      // 建档 3 问的选项下标
+export interface MethodPointLink {
+  pointId: string
+  order: number
+  instruction: string
+  point: PublicPointReference
 }
 
-/** 打卡记录（蓄电条与竹叶日历的唯一数据源） */
-export interface CheckinRecord {
-  date: string           // YYYY-MM-DD
-  planId: string
-  planName: string
-  after: string          // 完成后体感自评
-  ts: number
+export interface PublicProblemReference {
+  id: string
+  name: string
+  aliases: string[]
+  description?: string
+  bodyAreaIds: string[]
+}
+
+export interface ProblemMethodLink {
+  contentId: string
+  order: number
+  evidenceType: 'direct' | 'case' | 'author' | 'pending'
+  evidenceText: string
+  method: { id: string; title: string; methodName?: string; status: string }
+}
+
+export interface ProblemContentLink {
+  problemId: string
+  order: number
+  evidenceType: 'direct' | 'case' | 'author' | 'pending'
+  evidenceText: string
+  problem: PublicProblemReference
+}
+
+/** 文集元数据独立于正文，方便以后增加专刊、音频与付费阅读而不改文章结构。 */
+export interface AnthologyMeta {
+  columnId?: string
+  columnName?: string
+  issueNumber?: number
+  topics: string[]
+  coverImage?: string
+  editorNote?: string
+  originalPublishedAt?: number
+}
+
+export interface AnthologyColumnConfig {
+  id: string
+  name: string
+  description: string
+  color: string
+  sort_order: number
+  status: 'visible' | 'hidden'
+}
+
+export interface PublishedContentItem {
+  id: string
+  type: PublicContentType
+  title: string
+  summary: string
+  keywords: string[]
+  areaIds: string[]
+  contentHtml: string
+  methodName?: string
+  methodType?: string
+  materials: string[]
+  usageScope: string[]
+  notices: string[]
+  outsideScope: string[]
+  helpConditions: string[]
+  casesHtml: string
+  source: PublicContentSource
+  reviewedAt?: number
+  publishedAt?: number
+  guideAvailable: boolean
+  anthology?: AnthologyMeta
+  pointLinks?: MethodPointLink[]
+  problemLinks?: ProblemContentLink[]
+}
+
+/** 来源弹层的显示模型，不再参与旧的多层知识编译。 */
+export interface KnowledgeSource {
+  id: string
+  title: string
+  authorOrSpeaker?: string
+  publisherOrPlatform?: string
+  publishedAt?: string
+  sourceType: 'practitioner_experience' | 'web_source'
+  directUrl?: string
+  originalText?: string
+  verificationStatus: 'pending' | 'verified'
+  status: 'published'
+  createdAt: number
+  reviewedAt?: number
+  version: number
+  notes?: string[]
 }
