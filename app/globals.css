@@ -281,3 +281,52 @@ a { color: inherit; text-decoration: none; }
 .front-anthology-page .front-article-list{display:grid;grid-template-columns:1fr;gap:14px}
 .front-anthology-page .front-article-card{width:100%;box-sizing:border-box;background:#fff;box-shadow:0 8px 20px rgba(37,68,56,.06)}
 .front-anthology-page .front-bottom-nav{width:100%;margin:0}
+/* Exact values from the online pages-gear build. */
+.front-anthology-page .front-masthead{padding:14px 14px 11px}
+.front-anthology-page .front-masthead-title{margin-top:0;font-size:17px;letter-spacing:1px}
+.front-anthology-page .front-search-box{margin-top:8.5px;padding:6px 9px}
+.front-anthology-page .front-section{padding:11.5px 14px 0}
+.front-anthology-page .front-section-heading strong{margin-top:2.5px;font-size:14.5px}
+.front-anthology-page .front-column-row{gap:7px}
+.front-anthology-page .front-column-card{flex:0 0 110px;min-width:110px;width:110px;height:92px;padding:11px;border-radius:14px}
+.front-anthology-page .front-column-card strong{margin:17px 0 4px;font-size:14.5px}
+.front-anthology-page .front-column-card span{font-size:9px;line-height:1.55}
+.front-anthology-page .front-column-card small{font-size:8.5px}
+.front-anthology-page .front-article-list{gap:7.5px;margin-top:8.5px}
+.front-anthology-page .front-article-card{grid-template-columns:66px minmax(0,1fr);gap:8.5px;padding:11px;border-radius:12px;max-height:none}
+.front-anthology-page .front-card-cover,.front-anthology-page .front-cover-placeholder{width:66px;height:48px;border-radius:7px}
+.front-anthology-page .front-article-body{height:48px;min-height:48px}
+.front-anthology-page .front-article-body strong,.front-anthology-page .front-article-title{font-size:14.5px;line-height:1.4}
+.front-anthology-page .front-article-body p{margin-top:3px;font-size:10px;line-height:1.5}
+.front-anthology-page .front-article-body small{font-size:8.5px}
+@media(max-width:640px){.front-anthology-page .front-column-card{flex-basis:110px;min-width:110px;width:110px;height:92px}.front-anthology-page .front-article-card{grid-template-columns:66px minmax(0,1fr)}.front-anthology-page .front-card-cover,.front-anthology-page .front-cover-placeholder{width:66px;height:48px}}
+/* Fix card clipping: only the cover is fixed; text determines card height. */
+.front-anthology-page .front-article-card{height:auto;min-height:0;max-height:none;align-items:center;overflow:hidden}
+.front-anthology-page .front-article-body{height:auto;min-height:48px;overflow:hidden;display:flex;flex-direction:column}
+.front-anthology-page .front-article-body .front-article-title{height:auto;max-height:40px;overflow:hidden}
+.front-anthology-page .front-article-body p{height:auto;max-height:30px;overflow:hidden}
+.front-anthology-page .front-article-body small{margin-top:4px;height:14px;line-height:14px}
+/* Detail page uses the online detail build as the source of truth. */
+.reader-shell{height:auto;min-height:100dvh;overflow:visible;background:#fff9ed}
+.reader-shell .reader{width:min(100%,760px);height:auto;min-height:100dvh;display:block;margin:0 auto;padding:0 14px;background:#fff9ed;box-sizing:border-box}
+.reader-shell .reader-head{padding:0;background:transparent;border:0;box-shadow:none}
+.reader-shell .reader-topbar{display:none}
+.reader-shell .reader-head-content{padding:19px 4px 14px;background:transparent}
+.reader-shell .reader-tags{margin-bottom:10px}
+.reader-shell .reader-head h1{font-family:'Songti SC','STSong',serif;font-size:25.5px;line-height:1.42;color:#243f36}
+.reader-shell .reader-summary{font-size:11px;line-height:1.65;color:#718078}
+.reader-shell .reader-meta{font-size:9px;color:#718078}
+.reader-shell .reader-scroll{padding:0;overflow:visible;background:transparent}
+.reader-shell .reader-body{margin-top:6px;padding:19px 17px;border:0;border-radius:0;background:#fffefa;box-shadow:none;font-size:13.5px;line-height:2;color:#31443c}
+.reader-shell .article-notice{margin-top:5px;padding:9px 11px;border-radius:10px;background:#f2e7d2;font-size:9.5px;line-height:1.65;color:#776956}
+.reader-shell .reader-footer{display:none}
+.reader-shell .reader-actions{margin-top:11px}
+.reader-shell .reader-actions button{padding:7px 11px;background:#fff;border:0;font-size:11px}
+.reader-shell .reader-toolbar{margin-top:7px;background:#f3ebdd}
+@media(max-width:640px){.reader-shell .reader{padding:0 14px}.reader-shell .reader-head-content{padding:19px 4px 14px}.reader-shell .reader-head h1{font-size:25.5px}.reader-shell .reader-body{padding:19px 17px;font-size:13.5px}}
+.reader-shell .reader-topbar{display:flex;height:48px;padding:0 2px;border-bottom:1px solid #f0ece4;background:#fff;box-sizing:border-box}
+.reader-shell .reader-topbar strong{font-size:15px}
+.reader-shell .reader-back{font-size:34px}
+@media(max-width:640px){.reader-shell .reader-topbar{height:48px}}
+/* Frontend login is disabled for this release; keep account library visible. */
+.front-account-page .front-login-card,.front-account-page .front-privacy-note{display:none}
