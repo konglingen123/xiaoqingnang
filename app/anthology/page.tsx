@@ -313,11 +313,14 @@ function ArticleCover({
   article: Article;
   compact?: boolean;
 }) {
-  if (article.coverImage)
+  const imageSrc = article.coverImage?.startsWith("https://zibingziyi.zengshiwuyu.cn/")
+    ? `/api/image-proxy?url=${encodeURIComponent(article.coverImage)}`
+    : article.coverImage;
+  if (imageSrc)
     return (
       <img
         className={compact ? "front-today-cover" : "front-card-cover"}
-        src={article.coverImage}
+        src={imageSrc}
         alt=""
       />
     );
